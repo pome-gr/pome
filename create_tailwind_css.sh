@@ -1,4 +1,5 @@
 #! /usr/bin/env bash
+# This script creates the tailwind css file that is distributed with the software.
 # export PURGE_CSS_ENABLED=true to enable purge
 echo "Creating pome/static/tailwind.min.css"
 
