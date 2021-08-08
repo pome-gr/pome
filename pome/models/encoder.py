@@ -8,7 +8,7 @@ class PomeEncoder(JSONEncoder):
     """
 
     def __init__(self, **kwargs):
-        super(PomeEncoder, self).__init__(**kwargs, sort_keys=True, indent=2)
+        super(PomeEncoder, self).__init__(**kwargs, indent=2)
 
     def default(self, o):
         return o.__dict__
@@ -16,10 +16,22 @@ class PomeEncoder(JSONEncoder):
 
 class PomeEncodable(object):
     @classmethod
-    def from_json(cls, json_s):
-        to_return = cls()
-        to_return.__dict__ = json.loads(json_s)
+    def from_json_dict(cls, json_dict):
+        to_return = cls(**json_dict)
+        to_return._post_load_json()
         return to_return
+
+    @classmethod
+    def from_json_file(cls, filename):
+        try:
+            with open(filename, "r") as f:
+                return cls.from_json_dict(json.loads(f.read()))
+        except FileNotFoundError:
+            return None
+
+    def _post_load_json(self):
+        """Function to execute once the object has been de-serialised from json."""
+        pass
 
     def to_json(self):
         return PomeEncoder().encode(self)
