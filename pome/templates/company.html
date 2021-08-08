@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block main_title %}
+Company details
+{% endblock %}
+{% block content %}
+
+<div class="{{classes_info_box}}" role="alert">
+  <p>Edit the file {{CWD}}/company.json to edit these details.
+    <br /><br />
+    <strong>Warning:</strong> in this early version of pome, no validation whatsoever is performed on the data you
+    enter
+    in
+    "company.json" so
+    please refer to the doc (TODO) for precise information about all these fields.</span>
+  </p>
+</div>
+<pre>
+{{company}}
+</pre>
+{% endblock %}

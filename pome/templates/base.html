@@ -7,10 +7,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pome</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='tailwind.min.css') }}">
+  <link rel="stylesheet" href="{{url_for('static', filename='global.css') }}">
+
+  <!-- Using this technique at the moment to design re usable tailwind components because postcss is not part of the project yet. -->
+  {% set classes_info_box = "flex items-center bg-blue-500 text-white text-base px-4 py-3 mb-5"
+  %}
+
 </head>
 
 <body class="bg-gray-700 text-white mt-5 ml-10">
-  <nav class="fixed top-5 left-10" style="width: 350px;">
+  <nav class="fixed top-5 left-10" style="width: 200px;">
     <header class="flex">
       <img src="{{url_for('static', filename='pome-round.png')}}" width="70px" />
       <div class="ml-5">
@@ -18,9 +24,38 @@
         <h2 class="text-xl">v.0.0.1</h2>
       </div>
     </header>
+    <div class="flex flex-col items-end">
+      <div class="mt-5 inline-block">
+        {% set classes_nav_items = "mb-2 p-2 text-lg bg-blue-500 cursor-pointer hover:bg-blue-400" %}
+        {% set classes_nav_emojis = "mr-1" %}
+        <a href="/">
+          <div class="{{classes_nav_items}}"><span class="{{classes_nav_emojis}}">📒</span> Accounts</div>
+        </a>
+        <a href="/company">
+          <div class="{{classes_nav_items}}"><span class="{{classes_nav_emojis}}">⚙️</span> Company details</div>
+        </a>
+      </div>
+    </div>
   </nav>
   <main style="margin-left: 360px;">
-    {% block content %}{% endblock %}
+    <header>
+      {%if company %}
+      <h1 class="text-3xl">{{company.name}}</h1>
+      {%else%}
+      <h1 class="text-3xl text-yellow-500">Error</h1>
+      <p class="text-lg p-2">No file "company.json" was found at {{CWD}}.</p>
+      {%endif%}
+    </header>
+    {%if company %}
+    <main class="mt-2" style="width: 800px">
+      <header>
+        <h1 class="text-3xl">{% block main_title %}{% endblock %}</h1>
+      </header>
+      <main class="mt-3 px-3">
+        {% block content %}{% endblock %}
+      </main>
+    </main>
+    {%endif%}
   </main>
 </body>
 
