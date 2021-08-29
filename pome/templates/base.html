@@ -8,7 +8,7 @@
   <title>pome</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='tailwind.min.css') }}">
   <link rel="stylesheet" href="{{url_for('static', filename='global.css') }}">
-
+  <script src="{{url_for('static',filename='global.js')}}"></script>
   <!-- Using this technique at the moment to design re usable tailwind components because postcss is not part of the project yet. -->
   {% set classes_info_box = "flex items-center bg-blue-500 text-white text-base px-4 py-3 mb-5"
   %}

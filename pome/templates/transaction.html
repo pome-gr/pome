@@ -5,23 +5,30 @@ Transaction
 {% endblock %}
 
 {% block content_header %}
-<a href="/">⬅ <span class="normal-link">Back to accounts</span></a>
+<a href="/"><span class="normal-link">← Back to accounts</span></a>
 {% endblock %}
 
 {% block content %}
 
-<div class="mb-4">
+<div class=" w-full flex">
+  <div class="w-4/12">
+    <label for="tx-date" class="text-xl font-bold block mb-1">Date</label>
+    <input id="tx-date" type="date" class="w-4/5" />
+  </div>
+</div>
+
+<div class="mt-10">
   <table class="w-full">
     <thead class="text-left text-lg">
       <th class="w-4/12">Account Dr.</th>
       <th class="w-4/12">Account Cr.</th>
       <th>Amount ({{CURRENCY_SYMBOL[company.accounts_currency_code]}})</th>
     </thead>
-    <tbody>
+    <tbody id="tx-lines">
 
-      {% for _ in range(1) %}
-      <tr>
-        {%for i in range(2)%}
+      {% for i in range(2) %}
+      <tr {% if i==0 %} class="hidden" {%endif%} id="tx-line-{{i}}">
+        {%for j in range(2)%}
         <td class="w-4/12 pb-3"><select class="w-4/5">
             {% for section_prefix in accounts_chart.section_prefixes_map %}
             {% set accounts_of_section = accounts_chart.section_account_code_map[section_prefix] %}
@@ -30,7 +37,7 @@ Transaction
               {% for account_code in accounts_of_section %}
               {% set acc = accounts_chart.account_codes[account_code]%}
               {% set selected = false %}
-              {% if i == 1 and accounts_chart.bank_accounts_details[0] %}
+              {% if j == 1 and accounts_chart.bank_accounts_details[0] %}
               {% set selected = account_code == accounts_chart.bank_accounts_details[0].code %}
               {% endif %}
               <option value="{{acc.code}}" {%if selected %} selected {%endif%}>
@@ -43,35 +50,47 @@ Transaction
           </select></td>
         {%endfor%}
         <td class="pb-3">
-          <input type="text" placeholder="{{EXAMPLE_CURRENCY}}" />
+          <input type="text" placeholder="{{EXAMPLE_MONEY_INPUT}}" />{% if i == 0 %}<span class="pl-5 cursor-pointer"
+            title="Delete line" onclick="deleteTransactionLine(this)">❌</span>{%endif%}
         </td>
       </tr>
+
       {% endfor %}
 
     </tbody>
   </table>
-  <div class="btn btn-primary mt-3">Add Line</div>
+  <div class="btn btn-primary" id="btn-add-tx-line">Add Line</div>
 </div>
+
 <div class="mt-10 w-full flex">
-  <div class="w-4/12">
-    <label for="tx-date" class="text-xl font-bold block mb-1">Date</label>
-    <input id="tx-date" type="date" class="w-4/5" />
-  </div>
-  <div class="w-8/12">
+  <div class="w-2/3 mr-5">
     <label for="tx-narrative" class="text-xl font-bold block mb-1">Narrative</label>
-    <textarea id="tx-narrative" class="w-4/5" rows="4"
+    <textarea id="tx-narrative" class="w-full" rows="4"
       placeholder="Writing a narrative here will make the transaction appear in the journal by default"></textarea>
   </div>
+  <div class="w-1/3">
+    <label for="tx-comments" class="text-xl font-bold block mb-1">Comments</label>
+    <textarea id="tx-comments" class="w-full" rows="4"></textarea>
+  </div>
 </div>
-<div class="mt-10 w-full flex">
-  <div class="w-4/12">
-    <label for="tx-attachments" class="text-xl font-bold block mb-1">Attachments</label>
+<div class="mt-8 w-full flex flex-col items-start">
+  <div class="w-full" id="tx-attachments">
+    <div class="text-xl font-bold block mb-1">Attachments</div>
+
+    {% for i in range(2) %}
+    <div class="mb-2 w-full {% if i == 0 %}hidden {%endif%}" id="div-tx-file-{{i}}">
+      <label for="tx-file-{{i}}" class="btn btn-secondary">Choose file</label>
+      <input class="hidden select-none" type="file" id="tx-file-{{i}}" onchange="updateFile(this)" />
+      <span class="hidden">
+        <span class="pl-2 normal-link"></span>
+        <span class="pl-2 cursor-pointer" title="Delete file" onclick="deleteFile(this)"
+          id="delete-tx-file-{{i}}">❌</span>
+      </span>
+    </div>
+    {% endfor %}
 
   </div>
-  <div class="w-8/12">
-    <label for="tx-comments" class="text-xl font-bold block mb-1">Comments</label>
-    <textarea id="tx-comments" class="w-4/5" rows="4"></textarea>
-  </div>
+  <div class="btn btn-primary mt-3" onclick="addFile(this)">Add Attachment</div>
 </div>
 <div class="mt-10 w-full flex justify-end space-x-4">
   <a href="/">
@@ -79,4 +98,6 @@ Transaction
   </a>
   <div class="btn btn-primary text-lg">Record Transaction</div>
 </div>
+<script src="{{url_for('static',filename='transaction.js')}}" lang="js"></script>
+
 {% endblock %}
