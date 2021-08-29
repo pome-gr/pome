@@ -13,3 +13,8 @@ def accounts():
 @app.route("/company")
 def company():
     return render_template("company.html")
+
+
+@app.route("/transaction/new")
+def new_transaction():
+    return render_template("transaction.html", transaction=None)

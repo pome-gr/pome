@@ -26,13 +26,19 @@ No accounts found. Refer to pome's doc for example accounts charts.
 
 {%else%}
 
+<header class="w-full flex justify-end">
+  <a href="/transaction/new">
+    <div class="btn btn-success text-lg font-bold">New Transaction</div>
+  </a>
+</header>
+
 {% for section_prefix in accounts_chart.section_prefixes_map %}
 {% set accounts_of_section = accounts_chart.section_account_code_map[section_prefix] %}
 {% if accounts_of_section %}
 <h1 class="text-2xl">{{section_prefix}} - {{accounts_chart.section_prefixes_map[section_prefix].name}}</h1>
 <div class="p-5 text-xl">
-  <table>
-    <thead>
+  <table class="w-full">
+    <thead class="text-left">
       <th>Code</th>
       <th>Name</th>
       <th>Balance</th>
@@ -42,7 +48,7 @@ No accounts found. Refer to pome's doc for example accounts charts.
       {% set acc = accounts_chart.account_codes[account_code]%}
       <tr>
         <td>{{acc.code}}</td>
-        <td>{{acc.name}}</td>
+        <td style="width: 490px;">{{acc.name}}</td>
         <td>0</td>
       </tr>
       {% endfor %}

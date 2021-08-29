@@ -160,7 +160,6 @@ class AccountsChart(PomeEncodable):
             self._load_accounts_from_csv_file(self.accounts_csv_file)
 
         self._make_acounts_code_map()
-        print(self.account_codes)
         self._check_accounts_type()
 
         self._make_section_account_code_map()

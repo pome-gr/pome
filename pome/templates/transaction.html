@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block main_title %}
+{%if not transaction %}New{%endif%}
+Transaction
+{% endblock %}
+
+{% block content_header %}
+<a href="/">⬅ <span class="normal-link">Back to accounts</span></a>
+{% endblock %}
+
+{% block content %}
+
+<div class="mb-4">
+  <table class="w-full">
+    <thead class="text-left text-lg">
+      <th class="w-4/12">Account Dr.</th>
+      <th class="w-4/12">Account Cr.</th>
+      <th>Amount ({{CURRENCY_SYMBOL[company.accounts_currency_code]}})</th>
+    </thead>
+    <tbody>
+
+      {% for _ in range(1) %}
+      <tr>
+        {%for i in range(2)%}
+        <td class="w-4/12 pb-3"><select class="w-4/5">
+            {% for section_prefix in accounts_chart.section_prefixes_map %}
+            {% set accounts_of_section = accounts_chart.section_account_code_map[section_prefix] %}
+            {% if accounts_of_section %}
+            <optgroup label="{{section_prefix}} - {{accounts_chart.section_prefixes_map[section_prefix].name}}">
+              {% for account_code in accounts_of_section %}
+              {% set acc = accounts_chart.account_codes[account_code]%}
+              {% set selected = false %}
+              {% if i == 1 and accounts_chart.bank_accounts_details[0] %}
+              {% set selected = account_code == accounts_chart.bank_accounts_details[0].code %}
+              {% endif %}
+              <option value="{{acc.code}}" {%if selected %} selected {%endif%}>
+                {{acc.code}} - {{acc.name}}
+              </option>
+              {% endfor %}
+            </optgroup>
+            {%endif%}
+            {%endfor%}
+          </select></td>
+        {%endfor%}
+        <td class="pb-3">
+          <input type="text" placeholder="{{EXAMPLE_CURRENCY}}" />
+        </td>
+      </tr>
+      {% endfor %}
+
+    </tbody>
+  </table>
+  <div class="btn btn-primary mt-3">Add Line</div>
+</div>
+<div class="mt-10 w-full flex">
+  <div class="w-4/12">
+    <label for="tx-date" class="text-xl font-bold block mb-1">Date</label>
+    <input id="tx-date" type="date" class="w-4/5" />
+  </div>
+  <div class="w-8/12">
+    <label for="tx-narrative" class="text-xl font-bold block mb-1">Narrative</label>
+    <textarea id="tx-narrative" class="w-4/5" rows="4"
+      placeholder="Writing a narrative here will make the transaction appear in the journal by default"></textarea>
+  </div>
+</div>
+<div class="mt-10 w-full flex">
+  <div class="w-4/12">
+    <label for="tx-attachments" class="text-xl font-bold block mb-1">Attachments</label>
+
+  </div>
+  <div class="w-8/12">
+    <label for="tx-comments" class="text-xl font-bold block mb-1">Comments</label>
+    <textarea id="tx-comments" class="w-4/5" rows="4"></textarea>
+  </div>
+</div>
+<div class="mt-10 w-full flex justify-end space-x-4">
+  <a href="/">
+    <div class="btn btn-secondary text-lg">Cancel</div>
+  </a>
+  <div class="btn btn-primary text-lg">Record Transaction</div>
+</div>
+{% endblock %}

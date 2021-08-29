@@ -16,6 +16,7 @@ class Company(PomeEncodable):
         registered_address: Address = Address(),
         vat_number: str = "",
         accounts_currency_code: str = "",
+        locale: str = "",
     ):
         self.name: str = name
         self.registration_country_code: str = registration_country_code
@@ -26,3 +27,4 @@ class Company(PomeEncodable):
         self.registered_address: Address = registered_address
         self.vat_number: str = vat_number
         self.accounts_currency_code: str = accounts_currency_code
+        self.locale: str = locale
