@@ -120,7 +120,22 @@ async function generateTxPayload(ev) {
     });
   }
 
-  console.log(toReturn);
-
   return toReturn;
+}
+
+async function postTxPayload(ev) {
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/transaction/record", true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+
+  xhr.send(JSON.stringify(await generateTxPayload()));
+  xhr.onreadystatechange = function () {
+    if (this.readyState != 4) return;
+
+    if (this.status !== 200) {
+      txError(this.responseText);
+    } else {
+      txError("");
+    }
+  };
 }

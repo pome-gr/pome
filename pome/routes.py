@@ -1,7 +1,5 @@
 from pome import app, company
-from pome.models.address import Address
-from pome.models.company import Company
-from flask import render_template
+from flask import render_template, request
 
 
 @app.route("/")
@@ -18,3 +16,9 @@ def company():
 @app.route("/transaction/new")
 def new_transaction():
     return render_template("transaction.html", transaction=None)
+
+
+@app.route("/transaction/record", methods=["POST"])
+def record_transaction():
+    print(request.json)
+    return "Not good", 400
