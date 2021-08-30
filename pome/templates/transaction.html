@@ -10,10 +10,14 @@ Transaction
 
 {% block content %}
 
+<div id="tx-error" class="hidden mb-10 bg-red-500 rounded-sm text-white p-5">
+
+</div>
+
 <div class=" w-full flex">
   <div class="w-4/12">
     <label for="tx-date" class="text-xl font-bold block mb-1">Date</label>
-    <input id="tx-date" type="date" class="w-4/5" />
+    <input id="tx-date" type="date" class="w-4/5" required />
   </div>
 </div>
 
@@ -50,8 +54,10 @@ Transaction
           </select></td>
         {%endfor%}
         <td class="pb-3">
-          <input type="text" placeholder="{{EXAMPLE_MONEY_INPUT}}" />{% if i == 0 %}<span class="pl-5 cursor-pointer"
-            title="Delete line" onclick="deleteTransactionLine(this)">❌</span>{%endif%}
+          <input type="text" placeholder="{{EXAMPLE_MONEY_INPUT}}" {% if i==1 %} required{% endif %}
+            pattern="^[0-9]*(\.[0-9]{0,{{DECIMAL_PRECISION_FOR_CURRENCY}}})?$" />{% if i == 0
+          %}<span class="pl-5 cursor-pointer" title="Delete line"
+            onclick="deleteTransactionLine(this)">❌</span>{%endif%}
         </td>
       </tr>
 
@@ -96,7 +102,7 @@ Transaction
   <a href="/">
     <div class="btn btn-secondary text-lg">Cancel</div>
   </a>
-  <div class="btn btn-primary text-lg">Record Transaction</div>
+  <div class="btn btn-primary text-lg" onclick="generateTxPayload(this)">Record Transaction</div>
 </div>
 <script src="{{url_for('static',filename='transaction.js')}}" lang="js"></script>
 

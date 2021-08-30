@@ -19,9 +19,14 @@ accounts_chart: Union[AccountsChart, None] = AccountsChart.from_json_file(
 )
 app.jinja_env.globals["accounts_chart"] = accounts_chart
 
-from pome.currency import CURRENCY_SYMBOL, EXAMPLE_MONEY_INPUT
+from pome.currency import (
+    CURRENCY_SYMBOL,
+    EXAMPLE_MONEY_INPUT,
+    DECIMAL_PRECISION_FOR_CURRENCY,
+)
 
 app.jinja_env.globals["CURRENCY_SYMBOL"] = CURRENCY_SYMBOL
 app.jinja_env.globals["EXAMPLE_MONEY_INPUT"] = EXAMPLE_MONEY_INPUT
+app.jinja_env.globals["DECIMAL_PRECISION_FOR_CURRENCY"] = DECIMAL_PRECISION_FOR_CURRENCY
 
 import pome.routes

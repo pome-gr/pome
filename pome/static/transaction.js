@@ -52,7 +52,75 @@ function addFile(ev) {
 }
 
 function deleteFile(ev) {
-  console.log(ev);
-
   document.getElementById(ev.id.replace("delete-", "div-")).remove();
+}
+
+const txErrorDiv = document.getElementById("tx-error");
+function txError(error) {
+  if (error === "") {
+    txErrorDiv.classList.add("hidden");
+    return;
+  }
+  txErrorDiv.classList.remove("hidden");
+  txErrorDiv.innerText = error;
+}
+
+const txDate = document.getElementById("tx-date");
+async function generateTxPayload(ev) {
+  const txFirstAmount =
+    document.getElementById("tx-line-1").children[2].children[0];
+  if (!txDate.checkValidity()) {
+    txError("Please select a date.");
+    return;
+  }
+
+  if (!txFirstAmount.checkValidity()) {
+    txError(
+      "Please enter at least one amount. Use '.' to separate decimals, use at most the maximal number of decimals allowed in your currency (2 for EUR) and do not enter any currency symbol as amounts are set in your main currency."
+    );
+    return;
+  }
+
+  txError("");
+
+  let theDate = new Date(txDate.value);
+
+  let toReturn = { date: theDate.toISOString().substring(0, 10) };
+
+  toReturn.lines = [];
+  // Get lines
+  for (line of tbodyTxLine.children) {
+    if (line.classList.contains("hidden")) continue;
+    toReturn.lines.push({
+      account_dr: line.children[0].children[0].value,
+      account_cr: line.children[1].children[0].value,
+      raw_amount_in_main_currency: line.children[2].children[0].value,
+    });
+  }
+
+  toReturn.narrative = document.getElementById("tx-narrative").value;
+  toReturn.comments = document.getElementById("tx-comments").value;
+
+  toReturn.files = [];
+
+  for (fileDiv of txAttachments.children) {
+    if (
+      !fileDiv.id.includes("div-tx-file-") ||
+      fileDiv.classList.contains("hidden")
+    )
+      continue;
+
+    let fileInput = fileDiv.children[1];
+
+    if (fileInput.files[0] === undefined) continue;
+
+    toReturn.files.push({
+      filename: fileInput.files[0].name,
+      content: await getBase64File(fileInput.files[0]),
+    });
+  }
+
+  console.log(toReturn);
+
+  return toReturn;
 }

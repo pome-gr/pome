@@ -20,13 +20,11 @@ CURRENCY_SYMBOL = {
     "VND": "₫",  # Vietnamese Dong
 }
 
-EXAMPLE_MONEY_INPUT = (
-    "24."
-    + CurrencyHelper().decimal_precision_for_currency(
-        Currency(company.accounts_currency_code)
-    )
-    * "2"
+DECIMAL_PRECISION_FOR_CURRENCY = CurrencyHelper().decimal_precision_for_currency(
+    Currency(company.accounts_currency_code)
 )
+
+EXAMPLE_MONEY_INPUT = "24." + DECIMAL_PRECISION_FOR_CURRENCY * "2"
 # EXAMPLE_CURRENCY = (
 #     "Enter "
 #     + SUB_UNITS
