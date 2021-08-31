@@ -22,12 +22,14 @@ class PomeEncodable(object):
         return to_return
 
     @classmethod
-    def from_json_file(cls, filename):
+    def from_json_file(cls, filename, take_default_if_no_file_found=False):
         try:
             with open(filename, "r") as f:
                 return cls.from_json_dict(json.loads(f.read()))
         except FileNotFoundError:
-            return None
+            if not take_default_if_no_file_found:
+                return None
+            return cls()
 
     def _post_load_json(self):
         """Function to execute once the object has been de-serialised from json."""

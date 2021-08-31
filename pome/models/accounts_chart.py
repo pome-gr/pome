@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Dict
 from pome.models.encoder import PomeEncodable
 from pome.misc import get_longest_matching_prefix
 
@@ -54,6 +54,9 @@ class Account(PomeEncodable):
 
         self.bank_account_details = bank_account_details
 
+    def pretty_name(self) -> str:
+        return self.code + " - " + self.name
+
     def _post_load_json(self):
         if self.bank_account_details is not None:
             self.bank_account_details = BankAccountDetails.from_json_dict(
@@ -79,7 +82,14 @@ class AccountsChart(PomeEncodable):
         self.accounts_csv_file: str = accounts_csv_file
         self.accounts: List[Account] = accounts
         self.bank_accounts_details: List[BankAccountDetails] = bank_accounts_details
+
+        self.account_codes = None
         pass
+
+    def is_valid_account_code(self, code: str):
+        if self.account_codes is None:
+            raise ValueError("Account codes map is not set in account chart object.")
+        return code in self.account_codes
 
     def _load_accounts_from_csv_file(self, csv_file: str):
         try:
@@ -102,7 +112,7 @@ class AccountsChart(PomeEncodable):
             print(f"Accounts file not found! `{csv_file}`")
 
     def _make_acounts_code_map(self):
-        self.account_codes = {}
+        self.account_codes: Dict[str, Account] = {}
         for acc in self.accounts:
             if acc.code not in self.account_codes:
                 self.account_codes[acc.code] = acc

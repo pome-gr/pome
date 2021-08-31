@@ -40,14 +40,29 @@
   </nav>
   <main style="margin-left: 360px;">
     <header>
+      {% if not GIT_OK %}
+      <div class="inline-block rounded-sm text-white bg-red-500 p-5">
+        <h1 class="text-3xl">Git Error</h1>
+        <p class="text-lg p-2">{{CWD}} is not a valid git repository.</p>
+      </div>
+      {%else%}
+      {% if GIT_PULL_ERROR %}
+      <div class="mb-5 inline-block rounded-sm text-white bg-yellow-600 p-5">
+        <h1 class="text-3xl">Git Pull Error (non fatal)</h1>
+        <h2 class="text-2xl">Please solve by hand.</h2>
+        <pre class="text-lg p-2">{{GIT_PULL_ERROR}}</pre>
+
+      </div>
+      {% endif %}
       {%if company %}
       <h1 class="text-3xl">{{company.name}}</h1>
       {%else%}
       <h1 class="text-3xl text-yellow-500">Error</h1>
       <p class="text-lg p-2">No file "company.json" was found at {{CWD}}.</p>
       {%endif%}
+      {%endif%}
     </header>
-    {%if company %}
+    {%if company and GIT_OK %}
     <main class="mt-2" style="width: 800px">
       <header>
         <h1 class="text-3xl">{% block main_title %}{% endblock %}</h1>

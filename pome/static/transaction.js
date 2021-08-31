@@ -67,22 +67,6 @@ function txError(error) {
 
 const txDate = document.getElementById("tx-date");
 async function generateTxPayload(ev) {
-  const txFirstAmount =
-    document.getElementById("tx-line-1").children[2].children[0];
-  if (!txDate.checkValidity()) {
-    txError("Please select a date.");
-    return;
-  }
-
-  if (!txFirstAmount.checkValidity()) {
-    txError(
-      "Please enter at least one amount. Use '.' to separate decimals, use at most the maximal number of decimals allowed in your currency (2 for EUR) and do not enter any currency symbol as amounts are set in your main currency."
-    );
-    return;
-  }
-
-  txError("");
-
   let theDate = new Date(txDate.value);
 
   let toReturn = { date: theDate.toISOString().substring(0, 10) };
@@ -90,7 +74,11 @@ async function generateTxPayload(ev) {
   toReturn.lines = [];
   // Get lines
   for (line of tbodyTxLine.children) {
-    if (line.classList.contains("hidden")) continue;
+    if (
+      line.classList.contains("hidden") ||
+      !line.children[2].children[0].value
+    )
+      continue;
     toReturn.lines.push({
       account_dr: line.children[0].children[0].value,
       account_cr: line.children[1].children[0].value,
@@ -116,14 +104,46 @@ async function generateTxPayload(ev) {
 
     toReturn.files.push({
       filename: fileInput.files[0].name,
-      content: await getBase64File(fileInput.files[0]),
+      b64_content: await getBase64File(fileInput.files[0]),
     });
   }
 
   return toReturn;
 }
 
+function runTxValidation() {
+  const txFirstAmount =
+    document.getElementById("tx-line-1").children[2].children[0];
+  if (!txDate.checkValidity()) {
+    txError("Please select a date.");
+    return false;
+  }
+
+  if (!txFirstAmount.value) {
+    txError("Please enter at least one amount.");
+    return false;
+  }
+
+  let i = 0;
+  for (line of document.getElementById("tx-lines").children) {
+    if (!line.children[2].children[0].checkValidity()) {
+      txError(
+        `Amount ${line.children[2].children[0].value} at line ${i} is invalid. Please use '.' to separate decimals, use at most the maximal number of decimals allowed in your currency (2 for EUR) and do not enter any currency symbol as amounts are set in your main currency.`
+      );
+      return false;
+    }
+    i += 1;
+  }
+
+  txError("");
+  return true;
+}
+
 async function postTxPayload(ev) {
+  if (!runTxValidation()) {
+    return;
+  }
+
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "/transaction/record", true);
   xhr.setRequestHeader("Content-Type", "application/json");
