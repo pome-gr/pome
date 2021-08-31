@@ -17,3 +17,8 @@ function getBase64File(file) {
     reader.onerror = (error) => reject(error);
   });
 }
+
+function getLang() {
+  if (navigator.languages != undefined) return navigator.languages[0];
+  return navigator.language;
+}

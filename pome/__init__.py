@@ -1,8 +1,8 @@
 import os
-import os
 from flask import Flask
 from pome.models import Company, AccountsChart, Settings
-from typing import Union
+
+from typing import Union, Dict
 
 app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True  # not working
@@ -54,5 +54,13 @@ from pome.currency import (
 app.jinja_env.globals["CURRENCY_SYMBOL"] = CURRENCY_SYMBOL
 app.jinja_env.globals["EXAMPLE_MONEY_INPUT"] = EXAMPLE_MONEY_INPUT
 app.jinja_env.globals["DECIMAL_PRECISION_FOR_CURRENCY"] = DECIMAL_PRECISION_FOR_CURRENCY
+
+from pome.models.transaction import Transaction
+
+recorded_transactions: Dict[
+    str, Transaction
+] = Transaction.fetch_all_recorded_transactions()
+
+print(len(recorded_transactions))
 
 import pome.routes

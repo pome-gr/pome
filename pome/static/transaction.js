@@ -139,16 +139,18 @@ function runTxValidation() {
   return true;
 }
 
+const bntTxRecord = document.getElementById("btn-tx-record");
 async function postTxPayload(ev) {
   if (!runTxValidation()) {
     return;
   }
 
   var xhr = new XMLHttpRequest();
-  xhr.open("POST", "/transaction/record", true);
+  xhr.open("POST", "/transactions/record", true);
   xhr.setRequestHeader("Content-Type", "application/json");
 
   xhr.send(JSON.stringify(await generateTxPayload()));
+  bntTxRecord.classList.add("disabled");
   xhr.onreadystatechange = function () {
     if (this.readyState != 4) return;
 

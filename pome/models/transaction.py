@@ -2,7 +2,7 @@ import re
 
 from flask.scaffold import F
 from pome.models.encoder import PomeEncodable
-from typing import Tuple, Union, List
+from typing import Tuple, Union, List, Dict
 from money.money import Money
 from money.currency import Currency
 from pathlib import Path
@@ -34,6 +34,9 @@ class Amount(PomeEncodable):
 
     def amount(self) -> Money:
         return Money(self.raw_amount_in_main_currency, Currency(self.currency_code))
+
+    def formatted_amount(self) -> str:
+        return self.amount().format(company.locale)
 
     @classmethod
     def from_payload(cls, payload: str):
@@ -75,15 +78,18 @@ class TransactionAttachmentPayload(PomeEncodable):
 
 class TransactionLine(PomeEncodable):
     def __init__(self, account_dr_code: str, account_cr_code: str, amount: Amount):
-        self.account_dr_code = account_dr_code
-        self.account_cr_code = account_cr_code
-        self.amount = amount
+        self.account_dr_code: str = account_dr_code
+        self.account_cr_code: str = account_cr_code
+        self.amount: Amount = amount
 
         if not accounts_chart.is_valid_account_code(self.account_dr_code):
             raise ValueError(f"Invalid dr account code {self.account_dr_code }")
 
         if not accounts_chart.is_valid_account_code(self.account_cr_code):
             raise ValueError(f"Invalid cr account code {self.account_cr_code}")
+
+    def _post_load_json(self):
+        self.amount = Amount.from_json_dict(self.amount)
 
     @classmethod
     def from_payload(cls, payload):
@@ -136,6 +142,23 @@ class Transaction(PomeEncodable):
             raise ValueError(
                 f"Invalid date {self.date}. A valid date is yyyy-mm-dd, for instance 2021-08-30."
             )
+
+    def _post_load_json(self):
+        self.lines = list(map(TransactionLine.from_json_dict, self.lines))
+        self.attachments = list(
+            map(TransactionAttachmentOnDisk.from_json_dict, self.attachments)
+        )
+
+    @classmethod
+    def fetch_all_recorded_transactions(cls) -> Dict[str, "Transaction"]:
+        to_return = {}
+        for tx_folder in os.listdir(RECORDED_TX_FOLDER_NAME):
+            tx_file = os.path.join(RECORDED_TX_FOLDER_NAME, tx_folder, "tx.json")
+            if not os.path.exists(tx_file):
+                continue
+            to_return[tx_folder] = cls.from_json_file(tx_file)
+
+        return to_return
 
     def commit_message(self) -> str:
         to_return = self.date + "\n"
