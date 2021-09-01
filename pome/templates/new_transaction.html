@@ -17,7 +17,7 @@ Transaction
 <div class=" w-full flex">
   <div class="w-4/12">
     <label for="tx-date" class="text-xl font-bold block mb-1">Date</label>
-    <input id="tx-date" type="date" class="w-4/5" required />
+    <input id="tx-date" type="date" class="w-4/5" required input-date-no-future />
   </div>
 </div>
 
@@ -105,5 +105,5 @@ Transaction
   <div id="btn-tx-record" class="btn btn-primary text-lg" onclick="postTxPayload(this)">Record Transaction</div>
 </div>
 <script src="{{url_for('static',filename='transaction.js')}}" lang="js"></script>
-
+<script lang="js">mountDates()</script>
 {% endblock %}

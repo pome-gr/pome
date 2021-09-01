@@ -49,4 +49,10 @@ function mountDates() {
 
     if (theText !== "Invalid Date") elem.innerText = theText;
   }
+
+  console.log(document.querySelectorAll("[input-date-no-future]"));
+  for (elem of document.querySelectorAll("[input-date-no-future]")) {
+    let today = new Date();
+    elem.setAttribute("max", today.toISOString().slice(0, 10));
+  }
 }
