@@ -1,13 +1,14 @@
 import os
-from flask import Flask
-from pome.models import Company, AccountsChart, Settings
+from typing import Dict, Union
 
-from typing import Union, Dict
+from flask import Flask
+
+from pome.models import AccountsChart, Company, Settings
 
 app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True  # not working
 
-from git import Repo, InvalidGitRepositoryError, GitCommandError, Git
+from git import Git, GitCommandError, InvalidGitRepositoryError, Repo
 
 app.jinja_env.globals["GIT_OK"] = True
 app.jinja_env.globals["GIT_PULL_ERROR"] = ""
@@ -45,11 +46,8 @@ accounts_chart: Union[AccountsChart, None] = AccountsChart.from_json_file(
 )
 app.jinja_env.globals["accounts_chart"] = accounts_chart
 
-from pome.currency import (
-    CURRENCY_SYMBOL,
-    EXAMPLE_MONEY_INPUT,
-    DECIMAL_PRECISION_FOR_CURRENCY,
-)
+from pome.currency import (CURRENCY_SYMBOL, DECIMAL_PRECISION_FOR_CURRENCY,
+                           EXAMPLE_MONEY_INPUT)
 
 app.jinja_env.globals["CURRENCY_SYMBOL"] = CURRENCY_SYMBOL
 app.jinja_env.globals["EXAMPLE_MONEY_INPUT"] = EXAMPLE_MONEY_INPUT
@@ -64,3 +62,4 @@ recorded_transactions: Dict[
 print(len(recorded_transactions))
 
 import pome.routes
+import pome.test_routes

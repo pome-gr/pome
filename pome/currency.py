@@ -1,6 +1,7 @@
-from pome import company
 from money.currency import Currency, CurrencyHelper
 from money.money import Money
+
+from pome import company
 
 CURRENCY_SYMBOL = {
     "USD": "$",  # US Dollar

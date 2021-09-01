@@ -1,5 +1,5 @@
-from pome.models.encoder import PomeEncodable
 from pome.models.address import Address
+from pome.models.encoder import PomeEncodable
 
 
 class Company(PomeEncodable):

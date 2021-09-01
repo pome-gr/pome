@@ -158,6 +158,7 @@ async function postTxPayload(ev) {
       txError(this.responseText);
     } else {
       txError("");
+      window.location = "/transactions/recorded/" + this.responseText;
     }
   };
 }

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block main_title %}
-Transaction {{transaction.id}}
+Transaction {{order_recorded}}
 {% endblock %}
 
 {% block content_header %}
@@ -17,24 +17,15 @@ Transaction {{transaction.id}}
   <div class="w-4/12">
     <label for="tx-date" class="text-xl font-bold block mb-1">Date</label>
     <span id="formatted-date" data-date="{{ transaction.date }}">
-
     </span>
-    <script lang="js">
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      const formattedDateSpan = document.getElementById('formatted-date');
-      const theDate = new Date(formattedDateSpan.getAttribute("data-date"));
-      formattedDateSpan.innerText = theDate.toLocaleDateString(getLang(), options);
-    </script>
-
-
   </div>
 </div>
 
 <div class="mt-10">
   <table class="w-full">
     <thead class="text-left text-lg">
-      <th class="w-4/12">Account Dr.</th>
-      <th class="w-4/12">Account Cr.</th>
+      <th>Account Dr.</th>
+      <th>Account Cr.</th>
       <th>Amount ({{CURRENCY_SYMBOL[company.accounts_currency_code]}})</th>
     </thead>
     <tbody id="tx-lines">
@@ -42,16 +33,16 @@ Transaction {{transaction.id}}
       {% for line in transaction.lines %}
       <tr>
 
-        <td class="w-4/12 pb-3">
+        <td class="pb-3">
           {{accounts_chart.account_codes[line.account_dr_code].pretty_name()}}
         </td>
 
-        <td class="w-4/12 pb-3">
+        <td class="pb-3">
           {{accounts_chart.account_codes[line.account_cr_code].pretty_name()}}
         </td>
 
         <td class="pb-3">
-          {{line.amount.formatted_amount()}}
+          {{line.amount.amount(True)}}
         </td>
       </tr>
 
@@ -97,6 +88,11 @@ Transaction {{transaction.id}}
   </div>
 
 </div>
-
+<div class="mt-5 text-xs">
+  Transaction ID: {{transaction.id}} <br />
+  Record date: <span data-date-ISO8601="{{transaction.date_recorded}}"></span></div>
+<script lang="js">
+  mountDates();
+</script>
 
 {% endblock %}

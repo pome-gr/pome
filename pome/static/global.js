@@ -22,3 +22,31 @@ function getLang() {
   if (navigator.languages != undefined) return navigator.languages[0];
   return navigator.language;
 }
+
+function mountDates() {
+  let elems = document.querySelectorAll("[data-date]");
+  let options = { year: "numeric", month: "long", day: "numeric" };
+  for (elem of elems) {
+    let theDate = new Date(elem.getAttribute("data-date"));
+    let theText = theDate.toLocaleDateString(getLang(), options);
+
+    if (theText !== "Invalid Date") elem.innerText = theText;
+  }
+
+  elems = document.querySelectorAll("[data-date-ISO8601]");
+  options = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+  };
+  for (elem of elems) {
+    let theDate = new Date(elem.getAttribute("data-date-ISO8601"));
+    console.log(elem.getAttribute("data-date-ISO8601"));
+    let theText = theDate.toLocaleString(getLang(), options);
+
+    if (theText !== "Invalid Date") elem.innerText = theText;
+  }
+}

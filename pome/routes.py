@@ -1,13 +1,12 @@
 import os
+from typing import Any, List
 
-from pome import app, company
-from flask import render_template, request, send_file
+from flask import abort, render_template, request, send_file
+from git import GitCommandError
 
-from pome import git, settings, recorded_transactions
+from pome import app, company, git, recorded_transactions, settings
 from pome.models import transaction
 from pome.models.transaction import RECORDED_TX_FOLDER_NAME, Transaction
-
-from git import GitCommandError
 
 
 @app.route("/")
@@ -33,11 +32,13 @@ def new_transaction():
 @app.route("/transactions/recorded/<tx_id>")
 def show_transaction(tx_id):
     if not tx_id in recorded_transactions:
-        return "", 404
+        return abort(404)
 
     print(recorded_transactions[tx_id])
     return render_template(
-        "show_transaction.html", transaction=recorded_transactions[tx_id]
+        "show_transaction.html",
+        transaction=recorded_transactions[tx_id],
+        order_recorded=Transaction.order_recorded(recorded_transactions)(tx_id),
     )
 
 
@@ -73,4 +74,17 @@ def record_transaction():
         return str(e), 400
     except GitCommandError as e:
         return str(e), 400
-    return "ok"
+    return tx.id
+
+
+@app.route("/journal", methods=["GET"])
+def journal():
+    transactions: List[Any] = sorted(
+        list(recorded_transactions.items()), key=lambda x: x[1].date_recorded
+    )[::-1]
+
+    return render_template(
+        "journal.html",
+        transactions=transactions,
+        order_recorded=Transaction.order_recorded(recorded_transactions),
+    )

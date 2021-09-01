@@ -1,6 +1,7 @@
-from typing import List, Union, Dict
-from pome.models.encoder import PomeEncodable
+from typing import Dict, List, Union
+
 from pome.misc import get_longest_matching_prefix
+from pome.models.encoder import PomeEncodable
 
 
 class BankDetails(PomeEncodable):
@@ -32,7 +33,7 @@ class Account(PomeEncodable):
 
     ACCOUNT_TYPES = [
         "INCOME",
-        "COST",
+        "EXPENSE",
         "ASSET",
         "LIABILITY",
         "EQUITY",
