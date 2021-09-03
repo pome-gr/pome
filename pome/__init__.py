@@ -3,11 +3,14 @@ from typing import Dict, Set, Union
 
 from flask import Flask
 
+from pome._version import __version__
 from pome.models import AccountsChart, Company, Settings
 
 app = Flask(__name__)
 app.secret_key = b'\x9dq\x0bbE\xbaA{\xb4V`\xcaq\xb7\xcf"\x8b\xb8q\xe0\x13b\xb0\xb6'
 app.config["TEMPLATES_AUTO_RELOAD"] = True  # not working
+
+app.jinja_env.globals["POME_VERSION"] = __version__
 
 from git import Git, GitCommandError, InvalidGitRepositoryError, Repo
 
