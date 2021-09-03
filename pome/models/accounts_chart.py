@@ -72,6 +72,9 @@ class AccountsChartSection(PomeEncodable):
 
 
 class AccountsChart(PomeEncodable):
+
+    default_filename = "accounts_chart.json"
+
     def __init__(
         self,
         sections: List[AccountsChartSection] = [],

@@ -5,6 +5,8 @@ from pome.models.encoder import PomeEncodable
 class Company(PomeEncodable):
     """Stores all the metadata associated to a company."""
 
+    default_filename = "company.json"
+
     def __init__(
         self,
         name: str = "",

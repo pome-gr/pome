@@ -1,5 +1,5 @@
 import os
-from typing import Dict, Union
+from typing import Dict, Set, Union
 
 from flask import Flask
 
@@ -19,6 +19,32 @@ try:
 except InvalidGitRepositoryError:
     app.jinja_env.globals["GIT_OK"] = False
     git = None
+app.jinja_env.globals["CWD"] = os.getcwd()
+
+
+class GlobalState(object):
+    def __init__(self):
+        self.settings: Union[Settings, None] = None
+        self.company: Union[Company, None] = None
+        self.accounts_chart: Union[AccountsChart, None] = None
+        self.recorded_transactions: Union[Dict[str, "Transaction"], None] = None
+
+    def sync_from_disk(self):
+        from pome.models.transaction import Transaction
+
+        self.settings = Settings.from_disk(True)
+
+        self.company = Company.from_disk()
+        app.jinja_env.globals["company"] = self.company
+
+        self.accounts_chart = AccountsChart.from_disk()
+        app.jinja_env.globals["accounts_chart"] = self.accounts_chart
+
+        self.recorded_transactions = Transaction.fetch_all_recorded_transactions()
+
+
+g = GlobalState()
+g.sync_from_disk()
 
 
 def global_pull():
@@ -29,22 +55,8 @@ def global_pull():
         app.jinja_env.globals["GIT_PULL_ERROR"] = e.stderr
 
 
-settings = Settings.from_json_file("pome_settings.json", True)
-if settings.git_communicate_with_remote:
+if g.settings.git_communicate_with_remote:
     global_pull()
-
-app.jinja_env.globals["CWD"] = os.getcwd()
-
-# Loading the company from file
-company: Union[Company, None] = Company.from_json_file("company.json")
-app.jinja_env.globals["company"] = company
-
-
-# Loading the account chart from file
-accounts_chart: Union[AccountsChart, None] = AccountsChart.from_json_file(
-    "accounts_chart.json"
-)
-app.jinja_env.globals["accounts_chart"] = accounts_chart
 
 from pome.currency import (CURRENCY_SYMBOL, DECIMAL_PRECISION_FOR_CURRENCY,
                            EXAMPLE_MONEY_INPUT)
@@ -52,14 +64,6 @@ from pome.currency import (CURRENCY_SYMBOL, DECIMAL_PRECISION_FOR_CURRENCY,
 app.jinja_env.globals["CURRENCY_SYMBOL"] = CURRENCY_SYMBOL
 app.jinja_env.globals["EXAMPLE_MONEY_INPUT"] = EXAMPLE_MONEY_INPUT
 app.jinja_env.globals["DECIMAL_PRECISION_FOR_CURRENCY"] = DECIMAL_PRECISION_FOR_CURRENCY
-
-from pome.models.transaction import Transaction
-
-recorded_transactions: Dict[
-    str, Transaction
-] = Transaction.fetch_all_recorded_transactions()
-
-print(len(recorded_transactions))
 
 import pome.routes
 import pome.test_routes

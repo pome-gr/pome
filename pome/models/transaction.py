@@ -1,4 +1,3 @@
-import json
 import os
 import re
 import urllib
@@ -6,25 +5,25 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
-from flask.scaffold import F
 from money.currency import Currency
 from money.money import Money
 from werkzeug.utils import secure_filename
 
-from pome import accounts_chart, company
-from pome.currency import DECIMAL_PRECISION_FOR_CURRENCY
+from pome import g
 from pome.models.encoder import PomeEncodable
 
 RECORDED_TX_FOLDER_NAME = os.path.join("transactions", "recorded")
 
 
 class Amount(PomeEncodable):
-    amount_regex = re.compile(
-        "^[0-9]*(\.[0-9]{0," + str(DECIMAL_PRECISION_FOR_CURRENCY) + "})?$"
-    )
-
     def __init__(self, currency_code: str, raw_amount_in_main_currency: str):
-        if not bool(self.amount_regex.fullmatch(raw_amount_in_main_currency)):
+        # Putting this there to avoid circular imports
+        from pome.currency import DECIMAL_PRECISION_FOR_CURRENCY
+
+        amount_regex = re.compile(
+            "^[0-9]*(\.[0-9]{0," + str(DECIMAL_PRECISION_FOR_CURRENCY) + "})?$"
+        )
+        if not bool(amount_regex.fullmatch(raw_amount_in_main_currency)):
             raise ValueError(
                 f"Invalid payload amount {raw_amount_in_main_currency}. Decimal separator is '.' and maximum number of decimals allowed is set by the currency (EUR and USD are 2 decimals)."
             )
@@ -35,12 +34,12 @@ class Amount(PomeEncodable):
         to_ret = Money(self.raw_amount_in_main_currency, Currency(self.currency_code))
         if not formatted:
             return to_ret
-        return to_ret.format(company.locale)
+        return to_ret.format(g.company.locale)
 
     @classmethod
     def from_payload(cls, payload: str):
         try:
-            return cls(company.accounts_currency_code, payload)
+            return cls(g.company.accounts_currency_code, payload)
         except ValueError as e:
             raise e
 
@@ -81,10 +80,10 @@ class TransactionLine(PomeEncodable):
         self.account_cr_code: str = account_cr_code
         self.amount: Amount = amount
 
-        if not accounts_chart.is_valid_account_code(self.account_dr_code):
+        if not g.accounts_chart.is_valid_account_code(self.account_dr_code):
             raise ValueError(f"Invalid dr account code {self.account_dr_code }")
 
-        if not accounts_chart.is_valid_account_code(self.account_cr_code):
+        if not g.accounts_chart.is_valid_account_code(self.account_cr_code):
             raise ValueError(f"Invalid cr account code {self.account_cr_code}")
 
     def _post_load_json(self):
@@ -115,6 +114,8 @@ class TransactionLine(PomeEncodable):
 class Transaction(PomeEncodable):
     """Stores all the metadata associated to a transaction."""
 
+    default_filename = "tx.json"
+
     def __init__(
         self,
         date: Union[None, str],
@@ -125,7 +126,6 @@ class Transaction(PomeEncodable):
         narrative: str = "",
         comments: str = "",
         date_recorded: Union[None, str] = None,
-        files_on_disk: bool = False,
         id: Union[None, str] = None,
     ):
         self.date: Union[None, str] = date
@@ -138,7 +138,6 @@ class Transaction(PomeEncodable):
         self.narrative: str = narrative
         self.comments: str = comments
         self.id: Union[None, str] = id
-        self.files_on_disk: bool = files_on_disk
 
         if not self.validate_date(self.date):
             raise ValueError(
@@ -175,22 +174,29 @@ class Transaction(PomeEncodable):
         )
 
     def total_amount(self, formatted=False) -> Union[Money, str]:
-        to_return = Money("0", Currency(company.accounts_currency_code))
+        to_return = Money("0", Currency(g.company.accounts_currency_code))
         for line in self.lines:
             to_return += line.amount.amount()
 
         if not formatted:
             return to_return
-        return to_return.format(company.locale)
+        return to_return.format(g.company.locale)
 
     @classmethod
     def fetch_all_recorded_transactions(cls) -> Dict[str, "Transaction"]:
         to_return = {}
         for tx_folder in os.listdir(RECORDED_TX_FOLDER_NAME):
-            tx_file = os.path.join(RECORDED_TX_FOLDER_NAME, tx_folder, "tx.json")
+            tx_file = os.path.join(
+                RECORDED_TX_FOLDER_NAME, tx_folder, cls.default_filename
+            )
             if not os.path.exists(tx_file):
                 continue
             to_return[tx_folder] = cls.from_json_file(tx_file)
+
+            if tx_folder != to_return[tx_folder].id:
+                raise ValueError(
+                    f"Transaction id `{to_return[tx_folder].id}` stored in `{tx_file}` does not match folder name {tx_folder}`"
+                )
 
         return to_return
 
@@ -201,13 +207,13 @@ class Transaction(PomeEncodable):
         for line in self.lines:
             to_return += "  " + (
                 "DR "
-                + accounts_chart.account_codes[line.account_dr_code].pretty_name()
+                + g.accounts_chart.account_codes[line.account_dr_code].pretty_name()
                 + "\n"
                 + "\tCR "
-                + accounts_chart.account_codes[line.account_cr_code].pretty_name()
+                + g.accounts_chart.account_codes[line.account_cr_code].pretty_name()
                 + "\n"
                 + "  "
-                + line.amount.amount().format(company.locale)
+                + line.amount.amount().format(g.company.locale)
                 + "\n\n"
             )
 
@@ -238,22 +244,24 @@ class Transaction(PomeEncodable):
             i += 1
         return self.id
 
-    def get_tx_path(self) -> Union[None, str]:
+    def get_tx_path(self, absolute: bool = False) -> Union[None, str]:
         if self.id is None:
             return None
-        return os.path.join(RECORDED_TX_FOLDER_NAME, self.id)
+        if not absolute:
+            return os.path.join(RECORDED_TX_FOLDER_NAME, self.id)
+        else:
+            return os.path.join(os.getcwd(), RECORDED_TX_FOLDER_NAME, self.id)
 
     def save_on_disk(self):
         if self.get_tx_path() is None:
             return
         Path(self.get_tx_path()).mkdir(parents=True, exist_ok=True)
-        with open(os.path.join(self.get_tx_path(), f"tx.json"), "w") as f:
-            if not self.files_on_disk:
-                for i in range(len(self.attachments)):
+        with open(os.path.join(self.get_tx_path(), self.default_filename), "w") as f:
+            for i in range(len(self.attachments)):
+                if isinstance(self.attachments[i], TransactionAttachmentPayload):
                     self.attachments[i] = self.attachments[i].save_on_disk(
                         self.get_tx_path()
                     )
-                self.files_on_disk = True
             f.write(self.to_json())
 
     regex_date = re.compile("^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$")
@@ -304,7 +312,6 @@ class Transaction(PomeEncodable):
                 narrative,
                 comments,
                 date_recorded=date_recorded,
-                files_on_disk=False,
             )
             return toReturn
         except ValueError as e:

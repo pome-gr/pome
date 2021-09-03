@@ -4,9 +4,26 @@ from typing import Any, List
 from flask import abort, render_template, request, send_file
 from git import GitCommandError
 
-from pome import app, company, git, recorded_transactions, settings
-from pome.models import transaction
+from pome import app, g, git
+from pome.misc import get_recursive_json_hash
 from pome.models.transaction import RECORDED_TX_FOLDER_NAME, Transaction
+
+LAST_HASH = None
+
+
+@app.before_request
+def do_something_whenever_a_request_comes_in():
+    if "static" in request.url:
+        return
+    global LAST_HASH
+    the_hash = get_recursive_json_hash()
+    if LAST_HASH is None:
+        LAST_HASH = the_hash
+        return
+    if the_hash != LAST_HASH:
+        print("Change detected")
+        g.sync_from_disk()
+    LAST_HASH = the_hash
 
 
 @app.route("/")
@@ -31,14 +48,14 @@ def new_transaction():
 
 @app.route("/transactions/recorded/<tx_id>")
 def show_transaction(tx_id):
-    if not tx_id in recorded_transactions:
+    if not tx_id in g.recorded_transactions:
         return abort(404)
 
-    print(recorded_transactions[tx_id])
+    print(g.recorded_transactions[tx_id])
     return render_template(
         "show_transaction.html",
-        transaction=recorded_transactions[tx_id],
-        order_recorded=Transaction.order_recorded(recorded_transactions)(tx_id),
+        transaction=g.recorded_transactions[tx_id],
+        order_recorded=Transaction.order_recorded(g.recorded_transactions)(tx_id),
     )
 
 
@@ -61,13 +78,13 @@ def record_transaction():
         tx = Transaction.from_payload(request.json)
         tx.assign_suitable_id()
         tx.save_on_disk()
-        recorded_transactions[tx.id] = tx
+        g.recorded_transactions[tx.id] = tx
         git.add(os.path.join(tx.get_tx_path(), "*"))
         print("Git add")
         git.commit("-m", f"Adding transaction {tx.id}", "-m", tx.commit_message())
         print("Git commit")
         print(tx.commit_message())
-        if settings.git_communicate_with_remote:
+        if g.settings.git_communicate_with_remote:
             git.push()
             print("Git push")
     except ValueError as e:
@@ -80,11 +97,11 @@ def record_transaction():
 @app.route("/journal", methods=["GET"])
 def journal():
     transactions: List[Any] = sorted(
-        list(recorded_transactions.items()), key=lambda x: x[1].date_recorded
+        list(g.recorded_transactions.items()), key=lambda x: x[1].date_recorded
     )[::-1]
 
     return render_template(
         "journal.html",
         transactions=transactions,
-        order_recorded=Transaction.order_recorded(recorded_transactions),
+        order_recorded=Transaction.order_recorded(g.recorded_transactions),
     )

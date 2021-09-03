@@ -1,7 +1,6 @@
 from money.currency import Currency, CurrencyHelper
-from money.money import Money
 
-from pome import company
+from pome import g
 
 CURRENCY_SYMBOL = {
     "USD": "$",  # US Dollar
@@ -22,7 +21,7 @@ CURRENCY_SYMBOL = {
 }
 
 DECIMAL_PRECISION_FOR_CURRENCY = CurrencyHelper().decimal_precision_for_currency(
-    Currency(company.accounts_currency_code)
+    Currency(g.company.accounts_currency_code)
 )
 
 EXAMPLE_MONEY_INPUT = "24." + DECIMAL_PRECISION_FOR_CURRENCY * "2"

@@ -56,3 +56,7 @@ function mountDates() {
     elem.setAttribute("max", today.toISOString().slice(0, 10));
   }
 }
+
+function copyToClip(toCopy) {
+  navigator.clipboard.writeText(toCopy);
+}

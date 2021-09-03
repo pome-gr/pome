@@ -90,7 +90,10 @@ Transaction {{order_recorded}}
 </div>
 <div class="mt-5 text-xs">
   Transaction ID: {{transaction.id}} <br />
-  Record date: <span data-date-ISO8601="{{transaction.date_recorded}}"></span></div>
+  Record date: <span data-date-ISO8601="{{transaction.date_recorded}}"></span> <br />
+  <span class="cursor-pointer" onclick="copyToClip('{{transaction.get_tx_path(True)}}')">Path on disk (clik to copy):
+    {{transaction.get_tx_path(True)}}</span>
+</div>
 <script lang="js">
   mountDates();
 </script>

@@ -31,6 +31,10 @@ class PomeEncodable(object):
                 return None
             return cls()
 
+    @classmethod
+    def from_disk(cls, take_default_if_no_file_found=False):
+        return cls.from_json_file(cls.default_filename, take_default_if_no_file_found)
+
     def _post_load_json(self):
         """Function to execute once the object has been de-serialised from json."""
         pass
