@@ -28,7 +28,7 @@ Journal
 
       {% for tx_id, tx in transactions %}
       <tr>
-        <td class="p-1"><a href="/transactions/recorded/{{tx.id}}" class="normal-link" target="_blank"
+        <td class="p-1"><a href="/transactions/recorded/{{tx.id}}" class="normal-link"
             title="{{tx.date_recorded}}">Transaction
             {{order_recorded(tx_id)}}</a>
         </td>
