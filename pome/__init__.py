@@ -64,7 +64,7 @@ def global_pull():
         app.jinja_env.globals["GIT_PULL_ERROR"] = e.stderr
 
 
-if g.settings.git_communicate_with_remote:
+if git is not None and g.settings.git_communicate_with_remote:
     global_pull()
 
 print("Sync state from disk")

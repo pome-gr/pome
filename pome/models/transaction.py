@@ -185,18 +185,21 @@ class Transaction(PomeEncodable):
     @classmethod
     def fetch_all_recorded_transactions(cls) -> Dict[str, "Transaction"]:
         to_return = {}
-        for tx_folder in os.listdir(RECORDED_TX_FOLDER_NAME):
-            tx_file = os.path.join(
-                RECORDED_TX_FOLDER_NAME, tx_folder, cls.default_filename
-            )
-            if not os.path.exists(tx_file):
-                continue
-            to_return[tx_folder] = cls.from_json_file(tx_file)
-
-            if tx_folder != to_return[tx_folder].id:
-                raise ValueError(
-                    f"Transaction id `{to_return[tx_folder].id}` stored in `{tx_file}` does not match folder name {tx_folder}`"
+        try:
+            for tx_folder in os.listdir(RECORDED_TX_FOLDER_NAME):
+                tx_file = os.path.join(
+                    RECORDED_TX_FOLDER_NAME, tx_folder, cls.default_filename
                 )
+                if not os.path.exists(tx_file):
+                    continue
+                to_return[tx_folder] = cls.from_json_file(tx_file)
+
+                if tx_folder != to_return[tx_folder].id:
+                    raise ValueError(
+                        f"Transaction id `{to_return[tx_folder].id}` stored in `{tx_file}` does not match folder name {tx_folder}`"
+                    )
+        except FileNotFoundError as e:
+            return {}
 
         return to_return
 
