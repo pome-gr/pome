@@ -8,6 +8,7 @@
   <title>pome</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='tailwind.min.css') }}">
   <link rel="stylesheet" href="{{url_for('static', filename='global.css') }}">
+  <link rel="stylesheet" href="{{url_for('static', filename='spinner.css') }}">
   <script src="{{url_for('static',filename='global.js')}}"></script>
   <!-- Using this technique at the moment to design re usable tailwind components because postcss is not part of the project yet. -->
   {% set classes_info_box = "flex items-center bg-blue-500 text-white text-base px-4 py-3 mb-5"
@@ -25,7 +26,7 @@
         <h2 class="text-xl">v.0.0.1</h2>
       </div>
     </header>
-    <div class="flex flex-col items-end">
+    <div class="flex flex-col items-start">
       <div class="mt-5 inline-block">
         {% set classes_nav_items = "mb-2 p-2 text-lg bg-blue-500 cursor-pointer hover:bg-blue-400" %}
         {% set classes_nav_emojis = "mr-1" %}
@@ -38,8 +39,21 @@
         <a href="/company">
           <div class="{{classes_nav_items}}"><span class="{{classes_nav_emojis}}">⚙️</span> Company details</div>
         </a>
+      </div>
+      <div class="mt-5 flex w-full justify-start items-center space-x-4">
+        <img src="{{url_for('static',filename='git.svg')}}" class="w-12" />
+        <div class="flex  items-center space-x-1 cursor-pointer " title="git pull" onclick="sendPullRequest()">
 
-
+          <div class="spinner hidden" id="spinner-git-pull">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+          </div>
+          <div class="p-1 bg-white rounded-sm" id="btn-git-pull">
+            <img src="{{url_for('static',filename='download.svg')}}" style="color: white" class="w-4" alt="git pull" />
+          </div>
+          <div class="text-xs" id="text-git-pull">pull</div>
+        </div>
       </div>
     </div>
   </nav>
@@ -56,9 +70,11 @@
         <h1 class="text-3xl">Git Pull Error (non fatal)</h1>
         <h2 class="text-2xl">Please solve by hand.</h2>
         <pre class="text-lg p-2">{{GIT_PULL_ERROR}}</pre>
-
       </div>
       {% endif %}
+
+
+
       {%if company %}
       <h1 class="text-3xl">{{company.name}}</h1>
       {%else%}
@@ -69,6 +85,18 @@
     </header>
     {%if company and GIT_OK %}
     <main class="mt-2" style="width: 800px">
+
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <div class="mb-5 inline-block rounded-sm text-white p-5 {{category}}">
+        {{ message }}
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+
       <header>
         <h1 class="text-3xl">{% block main_title %}{% endblock %}</h1>
       </header>

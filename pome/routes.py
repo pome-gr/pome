@@ -1,27 +1,24 @@
 import os
 from typing import Any, List
 
-from flask import abort, render_template, request, send_file
+from flask import abort, render_template, request, send_file, flash
 from git import GitCommandError
 
-from pome import app, g, git
+from pome import app, g, git, global_pull
 from pome.misc import get_recursive_json_hash
 from pome.models.transaction import RECORDED_TX_FOLDER_NAME, Transaction
 
-LAST_HASH = None
+LAST_HASH = get_recursive_json_hash()
 
 
 @app.before_request
-def do_something_whenever_a_request_comes_in():
+def check_if_sync_needed():
     if "static" in request.url:
         return
     global LAST_HASH
     the_hash = get_recursive_json_hash()
-    if LAST_HASH is None:
-        LAST_HASH = the_hash
-        return
     if the_hash != LAST_HASH:
-        print("Change detected")
+        print("Change detected, sync from disk")
         g.sync_from_disk()
     LAST_HASH = the_hash
 
@@ -105,3 +102,15 @@ def journal():
         transactions=transactions,
         order_recorded=Transaction.order_recorded(g.recorded_transactions),
     )
+
+
+@app.route("/pull", methods=["PUT"])
+def pull():
+    try:
+        global_pull()
+        check_if_sync_needed()
+        flash("Git pull successful!", "bg-green-500")
+    except GitCommandError as e:
+        return str(e), 400
+
+    return "ok"

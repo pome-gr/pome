@@ -6,6 +6,7 @@ from flask import Flask
 from pome.models import AccountsChart, Company, Settings
 
 app = Flask(__name__)
+app.secret_key = b'\x9dq\x0bbE\xbaA{\xb4V`\xcaq\xb7\xcf"\x8b\xb8q\xe0\x13b\xb0\xb6'
 app.config["TEMPLATES_AUTO_RELOAD"] = True  # not working
 
 from git import Git, GitCommandError, InvalidGitRepositoryError, Repo
@@ -29,7 +30,12 @@ class GlobalState(object):
         self.accounts_chart: Union[AccountsChart, None] = None
         self.recorded_transactions: Union[Dict[str, "Transaction"], None] = None
 
+    def sync_settings_from_disk(self):
+        """Settings need to be load before everything else in order to interact with git."""
+        self.settings = Settings.from_disk(True)
+
     def sync_from_disk(self):
+        # Avoiding circular imports
         from pome.models.transaction import Transaction
 
         self.settings = Settings.from_disk(True)
@@ -44,7 +50,7 @@ class GlobalState(object):
 
 
 g = GlobalState()
-g.sync_from_disk()
+g.sync_settings_from_disk()
 
 
 def global_pull():
@@ -58,8 +64,14 @@ def global_pull():
 if g.settings.git_communicate_with_remote:
     global_pull()
 
-from pome.currency import (CURRENCY_SYMBOL, DECIMAL_PRECISION_FOR_CURRENCY,
-                           EXAMPLE_MONEY_INPUT)
+print("Sync state from disk")
+g.sync_from_disk()
+
+from pome.currency import (
+    CURRENCY_SYMBOL,
+    DECIMAL_PRECISION_FOR_CURRENCY,
+    EXAMPLE_MONEY_INPUT,
+)
 
 app.jinja_env.globals["CURRENCY_SYMBOL"] = CURRENCY_SYMBOL
 app.jinja_env.globals["EXAMPLE_MONEY_INPUT"] = EXAMPLE_MONEY_INPUT

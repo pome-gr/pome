@@ -60,3 +60,22 @@ function mountDates() {
 function copyToClip(toCopy) {
   navigator.clipboard.writeText(toCopy);
 }
+
+function sendPullRequest() {
+  var xhr = new XMLHttpRequest();
+  xhr.open("PUT", "/pull", true);
+  xhr.send();
+  document.getElementById("btn-git-pull").classList.add("hidden");
+  document.getElementById("text-git-pull").classList.add("hidden");
+  document.getElementById("spinner-git-pull").classList.remove("hidden");
+  xhr.onreadystatechange = function () {
+    if (this.readyState != 4) return;
+
+    if (this.status !== 200) {
+      //txError(this.responseText);
+    } else {
+      // txError("");
+      location.reload();
+    }
+  };
+}
