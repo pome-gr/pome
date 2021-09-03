@@ -56,7 +56,7 @@ g.sync_settings_from_disk()
 def global_pull():
     try:
         print("Git pull")
-        git.pull()
+        return git.pull()
     except GitCommandError as e:
         app.jinja_env.globals["GIT_PULL_ERROR"] = e.stderr
 

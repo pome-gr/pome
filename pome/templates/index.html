@@ -49,7 +49,10 @@ No accounts found. Refer to pome's doc for example accounts charts.
       <tr>
         <td>{{acc.code}}</td>
         <td style="width: 490px;">{{acc.name}}</td>
-        <td>0</td>
+        <td><span class="cursor-default"
+            title="{{acc.balance(formatted=True, algebrised=False)}}">{{acc.balance(formatted=True,
+            algebrised=True)}}</span>
+        </td>
       </tr>
       {% endfor %}
     </tbody>

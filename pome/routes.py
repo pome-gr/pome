@@ -1,7 +1,7 @@
 import os
 from typing import Any, List
 
-from flask import abort, render_template, request, send_file, flash
+from flask import abort, render_template, request, send_file, flash, Markup
 from git import GitCommandError
 
 from pome import app, g, git, global_pull
@@ -107,9 +107,9 @@ def journal():
 @app.route("/pull", methods=["PUT"])
 def pull():
     try:
-        global_pull()
+        msg = global_pull()
         check_if_sync_needed()
-        flash("Git pull successful!", "bg-green-500")
+        flash(Markup(f"Git pull successful!<br/><pre>{msg}</pre>"), "bg-green-500")
     except GitCommandError as e:
         return str(e), 400
 

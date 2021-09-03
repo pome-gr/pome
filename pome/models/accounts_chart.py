@@ -1,7 +1,11 @@
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Tuple
+
+from money.currency import Currency
 
 from pome.misc import get_longest_matching_prefix
 from pome.models.encoder import PomeEncodable
+
+from money.money import Money
 
 
 class BankDetails(PomeEncodable):
@@ -57,6 +61,47 @@ class Account(PomeEncodable):
 
     def pretty_name(self) -> str:
         return self.code + " - " + self.name
+
+    def balance(
+        self, formatted=False, algebrised=False
+    ) -> Union[Money, str, Tuple[Money, str]]:
+        from pome import g
+        from pome.models.transaction import Transaction
+
+        sum_dr = Money("0", Currency(g.company.accounts_currency_code))
+        sum_cr = Money("0", Currency(g.company.accounts_currency_code))
+        for tx_id in g.recorded_transactions:
+            tx: Transaction = g.recorded_transactions[tx_id]
+            for line in tx.lines:
+                if line.account_dr_code == self.code:
+                    sum_dr += line.amount.amount()
+                elif line.account_cr_code == self.code:
+                    sum_cr += line.amount.amount()
+
+        balance = None
+        if algebrised:
+            if self.type in ["INCOME", "LIABILITY", "EQUITY"]:
+                balance = sum_cr - sum_dr
+            else:
+                balance = sum_dr - sum_cr
+        else:
+            if sum_cr >= sum_dr:
+                winning_side = "CR"
+                balance = sum_cr - sum_dr
+            else:
+                winning_side = "DR"
+                balance = sum_dr - sum_cr
+
+        if not formatted:
+            if algebrised:
+                return balance
+            else:
+                return balance, winning_side
+
+        if algebrised:
+            return balance.format(g.company.locale)
+        else:
+            return balance.format(g.company.locale) + " " + winning_side
 
     def _post_load_json(self):
         if self.bank_account_details is not None:

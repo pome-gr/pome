@@ -19,8 +19,8 @@ Journal
       <th># <span class="cursor-pointer"
           title="Transactions are numbered following the date at which they were recorded in pome.">❓</span>
       </th>
-      <th>Transaction date</th>
-      <th>Total Amount ({{CURRENCY_SYMBOL[company.accounts_currency_code]}})</th>
+      <th>Date</th>
+      <th>Amount ({{CURRENCY_SYMBOL[company.accounts_currency_code]}})</th>
       <th>Narrative</th>
 
     </thead>
@@ -28,14 +28,14 @@ Journal
 
       {% for tx_id, tx in transactions %}
       <tr>
-        <td class="p-1"><a href="/transactions/recorded/{{tx.id}}" class="normal-link"
+        <td class="p-1 w-1/5"><a href="/transactions/recorded/{{tx.id}}" class="normal-link"
             title="{{tx.date_recorded}}">Transaction
             {{order_recorded(tx_id)}}</a>
         </td>
-        <td class="p-1"><span data-date="{{tx.date}}"></span></span>
+        <td class="p-1 w-1/5"><span data-date="{{tx.date}}"></span></span>
         </td>
-        <td class="p-1 ">{{tx.total_amount(formatted=True)}}</td>
-        <td class="p-1 pb-2 text-sm w-1/5">{{tx.narrative}}</td>
+        <td class="p-1 w-1/5">{{tx.total_amount(formatted=True)}}</td>
+        <td class="p-1 py-2 text-sm w-1/5">{{tx.narrative}}</td>
 
 
       </tr>
