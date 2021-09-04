@@ -29,6 +29,15 @@ def accounts():
     return render_template("index.html")
 
 
+@app.route("/accounts/<account_code>")
+def account(account_code):
+    if not account_code in g.accounts_chart.account_codes:
+        abort(404)
+    return render_template(
+        "account.html", account=g.accounts_chart.account_codes[account_code]
+    )
+
+
 @app.route("/company")
 def company():
     if not app.jinja_env.globals["GIT_OK"]:

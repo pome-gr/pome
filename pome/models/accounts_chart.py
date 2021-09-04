@@ -62,6 +62,28 @@ class Account(PomeEncodable):
     def pretty_name(self) -> str:
         return self.code + " - " + self.name
 
+    def transactions_lines(self, filter=""):
+        """Set filter to 'DR' or 'CR' to get only those type of transactions."""
+        from pome import g
+        from pome.models.transaction import Transaction, TransactionLine
+
+        to_return: List[Tuple[Transaction, TransactionLine]] = []
+        for tx_id in g.recorded_transactions:
+            tx: Transaction = g.recorded_transactions[tx_id]
+            for line in tx.lines:
+                if line.account_dr_code == self.code:
+                    if filter == "":
+                        to_return.append((tx, line))
+                    elif filter == "DR":
+                        to_return.append((tx, line))
+                elif line.account_cr_code == self.code:
+                    if filter == "":
+                        to_return.append((tx, line))
+                    elif filter == "CR":
+                        to_return.append((tx, line))
+
+        return sorted(to_return, key=lambda x: x[0].id)
+
     def balance(
         self, formatted=False, algebrised=False
     ) -> Union[Money, str, Tuple[Money, str]]:

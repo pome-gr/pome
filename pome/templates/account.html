@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block main_title %}
+Account {{account.pretty_name()}}
+{% endblock %}
+
+{% block content_header %}
+<a href="/"><span class="normal-link">← Back to accounts</span></a>
+{% endblock %}
+
+{% block content %}
+
+<div class="mt-4 flex items-center">
+  <div class="flex flex-col items-end mr-4">
+    <div class="text-xl">Balance</div>
+    <div class="text-xl">Algebrised Balance</div>
+  </div>
+  <div>
+    <div class="pl-3 text-xl">{{account.balance(True)}}</div>
+    <div class="pl-3 text-xl">{{account.balance(True, True)}}</div>
+  </div>
+</div>
+
+<section class="account">
+  <header class="T-account-header">
+    <h3>Dr.</h3>
+    <h2 class="text-xl">{{account.pretty_name()}}</h2>
+    <h3>Cr.</h3>
+  </header>
+  <div class="T-account">
+    <section class="T-account-DR">
+      <div class="T-account-DR-header">
+        <div>
+          <h3>Date</h3>
+        </div>
+        <div>
+          <h3>Details</h3>
+        </div>
+        <div class='col-amount'>
+          <h3>Amount</h3>
+        </div>
+      </div>
+      <div class="T-account-transaction-lines">
+        {% for tx, tx_line in account.transactions_lines("DR") %}
+        <div class="T-account-transaction-line">
+          <div><a href="/transactions/recorded/{{tx.id}}" data-date="{{tx.date}}" class="normal-link"></a></div>
+          <div class="text-sm">{{accounts_chart.account_codes[tx_line.account_cr_code].pretty_name()}}</div>
+          <div class='col-amount'>{{tx_line.amount.amount(True)}}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+    <hr width="1" size="auto" style="display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 1px; height:auto;">
+    <section class="T-account-CR">
+      <div class="T-account-DR-header">
+        <div>
+          <h3>Date</h3>
+        </div>
+        <div>
+          <h3>Details</h3>
+        </div>
+        <div class='col-amount'>
+          <h3>Amount</h3>
+        </div>
+      </div>
+
+      <div class="T-account-transaction-lines">
+        {% for tx, tx_line in account.transactions_lines("CR") %}
+        <div class="T-account-transaction-line">
+          <div class="mr-2"><a href="/transactions/recorded/{{tx.id}}" data-date="{{tx.date}}" class="normal-link"></a>
+          </div>
+          <div class="text-sm">{{accounts_chart.account_codes[tx_line.account_dr_code].pretty_name()}}</div>
+          <div class='col-amount'>{{tx_line.amount.amount(True)}}</div>
+        </div>
+        {% endfor %}
+      </div>
+
+    </section>
+  </div>
+</section>
+
+<script lang="js">
+  mountDates();
+</script>
+
+{% endblock %}

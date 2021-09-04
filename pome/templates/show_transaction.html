@@ -34,11 +34,14 @@ Transaction {{order_recorded}}
       <tr>
 
         <td class="pb-3">
-          {{accounts_chart.account_codes[line.account_dr_code].pretty_name()}}
+          <a href="/accounts/{{line.account_dr_code}}" class="normal-link">
+            {{accounts_chart.account_codes[line.account_dr_code].pretty_name()}}</a>
         </td>
 
         <td class="pb-3">
-          {{accounts_chart.account_codes[line.account_cr_code].pretty_name()}}
+          <a href="/accounts/{{line.account_cr_code}}" class="normal-link">
+            {{accounts_chart.account_codes[line.account_cr_code].pretty_name()}}
+          </a>
         </td>
 
         <td class="pb-3">

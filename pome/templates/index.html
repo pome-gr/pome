@@ -48,7 +48,7 @@ No accounts found. Refer to pome's doc for example accounts charts.
       {% set acc = accounts_chart.account_codes[account_code]%}
       <tr>
         <td>{{acc.code}}</td>
-        <td style="width: 490px;">{{acc.name}}</td>
+        <td style="width: 490px;"><a href="/accounts/{{acc.code}}" class="normal-link">{{acc.name}}</a></td>
         <td><span class="cursor-default"
             title="{{acc.balance(formatted=True, algebrised=False)}}">{{acc.balance(formatted=True,
             algebrised=True)}}</span>
