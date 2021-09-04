@@ -150,7 +150,7 @@ class AccountsChart(PomeEncodable):
         bank_accounts_details: List[BankAccountDetails] = [],
     ):
         self.sections: List[AccountsChartSection] = sections
-        self.accounts_csv_file: str = accounts_csv_file
+        self.accounts_csv_file: Union[None, str] = accounts_csv_file
         self.accounts: List[Account] = accounts
         self.bank_accounts_details: List[BankAccountDetails] = bank_accounts_details
 

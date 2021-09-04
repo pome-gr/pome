@@ -19,11 +19,12 @@ def get_recursive_json_hash():
     for dirpath, dirnames, filenames in os.walk("."):
         if ".git" in dirnames:
             dirnames.remove(".git")
-        for filename in glob(os.path.join(dirpath, "*.json")):
-            if os.path.exists(filename):
-                if the_hash is None:
-                    the_hash = hash(pathlib.Path(filename).stat())
-                else:
-                    the_hash = hash((the_hash, hash(pathlib.Path(filename).stat())))
+        for filetype in ["*.json", "*.csv"]:
+            for filename in glob(os.path.join(dirpath, filetype)):
+                if os.path.exists(filename):
+                    if the_hash is None:
+                        the_hash = hash(pathlib.Path(filename).stat())
+                    else:
+                        the_hash = hash((the_hash, hash(pathlib.Path(filename).stat())))
 
     return the_hash
