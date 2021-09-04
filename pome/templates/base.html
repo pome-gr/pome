@@ -19,12 +19,14 @@
 
 <body class="bg-gray-700 text-white mt-5 ml-10">
   <nav class="fixed top-5 left-10" style="width: 200px;">
-    <header class="flex">
+    <header class="flex cursor-pointer" onclick="window.location='/'">
+
       <img src="{{url_for('static', filename='pome-round.png')}}" width="70px" />
       <div class="ml-5">
         <h1 class="text-4xl">pome</h1>
         <h2 class="text-xl">v{{POME_VERSION}}</h2>
       </div>
+
     </header>
     <div class="flex flex-col items-start">
       <div class="mt-5 inline-block">
