@@ -202,6 +202,15 @@ class AccountsChart(PomeEncodable):
                     f"Warning. Account type {acc.type} for account {acc} is not valid. Valid types are: {Account.ACCOUNT_TYPES}"
                 )
 
+    def prefix_level(self, prefix: str) -> int:
+        """Returns the level of an account prefix in the account chart tree."""
+        level = 0
+        for i in range(len(prefix)):
+            prefix_of = prefix[: i + 1]
+            if prefix_of in self.section_prefixes_map:
+                level += 1
+        return level - 1
+
     def _make_section_account_code_map(self):
         self.section_prefixes_map = {}
         for section in self.sections:

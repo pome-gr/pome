@@ -11,12 +11,16 @@ Account {{account.pretty_name()}}
 
 <div class="mt-4 flex items-center">
   <div class="flex flex-col items-end mr-4">
+
     <div class="text-xl">Balance</div>
     <div class="text-xl">Algebrised Balance</div>
+    <div class="text-xl">Account type</div>
   </div>
   <div>
+
     <div class="pl-3 text-xl">{{account.balance(True)}}</div>
     <div class="pl-3 text-xl">{{account.balance(True, True)}}</div>
+    <div class="pl-3 text-xl">{{account.type}}</div>
   </div>
 </div>
 

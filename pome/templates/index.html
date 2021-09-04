@@ -24,7 +24,7 @@ Accounts
 
 No accounts found. Refer to pome's doc for example accounts charts.
 
-{%else%}
+{%endif%}
 
 <header class="w-full flex justify-end">
   <a href="/transactions/new">
@@ -34,36 +34,54 @@ No accounts found. Refer to pome's doc for example accounts charts.
 
 {% for section_prefix in accounts_chart.section_prefixes_map %}
 {% set accounts_of_section = accounts_chart.section_account_code_map[section_prefix] %}
-{% if accounts_of_section %}
-<h1 class="text-2xl">{{section_prefix}} - {{accounts_chart.section_prefixes_map[section_prefix].name}}</h1>
-<div class="p-5 text-xl">
-  <table class="w-full">
-    <thead class="text-left">
-      <th>Code</th>
-      <th>Name</th>
-      <th>Balance</th>
-    </thead>
-    <tbody>
-      {% for account_code in accounts_of_section %}
-      {% set acc = accounts_chart.account_codes[account_code]%}
-      <tr>
-        <td>{{acc.code}}</td>
-        <td style="width: 490px;"><a href="/accounts/{{acc.code}}" class="normal-link">{{acc.name}}</a></td>
-        <td><span class="cursor-default"
-            title="{{acc.balance(formatted=True, algebrised=False)}}">{{acc.balance(formatted=True,
-            algebrised=True)}}</span>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+
+{% set account_level = accounts_chart.prefix_level(section_prefix) %}
+<div style="padding-left: {{3*account_level}}rem">
+  {% set title_size = "text-base" %}
+  {% set text_size = "text-base" %}
+  {% set title_mb = "mb-0" %}
+  {% if account_level == 0 %}
+  {% set title_size = "text-2xl" %}
+  {% set text_size = "text-xl" %}
+  {% set title_mb = "mb-2" %}
+  {% endif %}
+  {% if account_level == 1 %}
+  {% set title_size = "text-xl" %}
+  {% set text_size = "text-xl" %}
+  {% set title_mb = "mb-1" %}
+  {% endif %}
+  <h1 class="{{title_size}} {{title_mb}}">{{section_prefix}} -
+    {{accounts_chart.section_prefixes_map[section_prefix].name}}</h1>
+  {% if accounts_of_section %}
+  <div class="pt-2 pb-5  {{text_size}}">
+    <table class="w-full">
+      <thead class="text-left">
+        <th>Code</th>
+        <th>Name</th>
+        <th>Balance</th>
+      </thead>
+      <tbody>
+        {% for account_code in accounts_of_section %}
+        {% set acc = accounts_chart.account_codes[account_code]%}
+        <tr>
+          <td>{{acc.code}}</td>
+          <td style="width: 490px;"><a href="/accounts/{{acc.code}}" class="normal-link">{{acc.name}}</a></td>
+          <td><span class="cursor-default"
+              title="{{acc.balance(formatted=True, algebrised=False)}}">{{acc.balance(formatted=True,
+              algebrised=True)}}</span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {%endif%}
 </div>
-{%endif%}
+
 {% endfor %}
 
 
 
-{% endif %}
 {% endif %}
 
 {% endblock %}
