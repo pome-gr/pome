@@ -62,6 +62,9 @@ class Account(PomeEncodable):
     def pretty_name(self) -> str:
         return self.code + " - " + self.name
 
+    def is_used(self) -> bool:
+        return len(self.transactions_lines()) > 0
+
     def transactions_lines(self, filter=""):
         """Set filter to 'DR' or 'CR' to get only those type of transactions."""
         from pome import g
@@ -156,6 +159,20 @@ class AccountsChart(PomeEncodable):
 
         self.account_codes = None
         pass
+
+    def are_all_accounts_used(self) -> bool:
+        for acc in self.accounts:
+            if not acc.is_used():
+                return False
+        return True
+
+    def at_least_one_account_used_in_section(self, section_prefix: str) -> bool:
+        if section_prefix not in self.section_account_code_map:
+            return False
+        for acc in self.section_account_code_map[section_prefix]:
+            if self.account_codes[acc].is_used() == True:
+                return True
+        return False
 
     def is_valid_account_code(self, code: str):
         if self.account_codes is None:

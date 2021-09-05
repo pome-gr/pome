@@ -168,6 +168,17 @@ select:after {
   border-color: rgb(231, 33, 33) transparent transparent transparent;
 }
 
+input[type="checkbox"] {
+  /* Double-sized Checkboxes */
+  -ms-transform: scale(1.2); /* IE */
+  -moz-transform: scale(1.2); /* FF */
+  -webkit-transform: scale(1.2); /* Safari and Chrome */
+  -o-transform: scale(1.2); /* Opera */
+  transform: scale(1.2);
+  margin-right: 0.4rem;
+  cursor: pointer;
+}
+
 .normal-link {
   text-decoration: underline;
   color: rgba(147, 197, 253);

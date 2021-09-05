@@ -14,6 +14,7 @@ Journal
 </div>
 
 <div class="mt-10">
+  {% if transactions %}
   <table class="w-full">
     <thead class="text-left text-lg">
       <th># <span class="cursor-pointer"
@@ -42,8 +43,14 @@ Journal
 
       {% endfor %}
 
+
     </tbody>
   </table>
+  {% else %}
+  <div>
+    No transaction found.
+  </div>
+  {% endif %}
 
 </div>
 <script lang="js">
