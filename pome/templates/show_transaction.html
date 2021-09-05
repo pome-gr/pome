@@ -58,24 +58,24 @@ Transaction {{order_recorded}}
 <div class="mt-8 text-xl font-bold">
   Total Amount: {{transaction.total_amount(True)}}
 </div>
-<div class="mt-10 w-full flex">
-  <div class="w-1/3 mr-5">
-    <label for="tx-narrative" class="text-xl font-bold block mb-1">Narrative</label>
-    {% if transaction.narrative %}
-    <p>{{transaction.narrative}}</p>
-    {% else %}
-    <p>No narrative.</p>
-    {% endif %}
-  </div>
-  <div class="w-2/3">
-    <label for="tx-comments" class="text-xl font-bold block mb-1 text-justify">Comments</label>
-    {% if transaction.comments %}
-    <p>{{transaction.comments}}</p>
-    {% else %}
-    <p>No comments.</p>
-    {% endif %}
-  </div>
+
+<div class="mt-8">
+  <label for="tx-narrative" class="text-xl font-bold block mb-1">Narrative</label>
+  {% if transaction.narrative %}
+  <p>{{transaction.narrative}}</p>
+  {% else %}
+  <p>No narrative.</p>
+  {% endif %}
 </div>
+<div class="mt-8">
+  <label for="tx-comments" class="text-xl font-bold block mb-1 ">Comments</label>
+  {% if transaction.comments %}
+  <p>{{transaction.comments}}</p>
+  {% else %}
+  <p>No comments.</p>
+  {% endif %}
+</div>
+
 
 <div class="mt-8 w-full flex flex-col items-start">
   <div class="w-full" id="tx-attachments">
@@ -95,7 +95,7 @@ Transaction {{order_recorded}}
 
 </div>
 
-<div class="mt-5 text-xs">
+<div class="mt-5 text-xs ">
   Transaction ID: {{transaction.id}} <br />
   Record date: <span data-date-ISO8601="{{transaction.date_recorded}}"></span> <br />
   <span class="cursor-pointer" onclick="copyToClip('{{transaction.get_tx_path(True)}}')">Path on disk (clik to copy):

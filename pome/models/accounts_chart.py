@@ -79,7 +79,7 @@ class Account(PomeEncodable):
                         to_return.append((tx, line))
                     elif filter == "DR":
                         to_return.append((tx, line))
-                elif line.account_cr_code == self.code:
+                if line.account_cr_code == self.code:
                     if filter == "":
                         to_return.append((tx, line))
                     elif filter == "CR":
@@ -100,7 +100,7 @@ class Account(PomeEncodable):
             for line in tx.lines:
                 if line.account_dr_code == self.code:
                     sum_dr += line.amount.amount()
-                elif line.account_cr_code == self.code:
+                if line.account_cr_code == self.code:
                     sum_cr += line.amount.amount()
 
         balance = None
