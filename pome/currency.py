@@ -24,7 +24,7 @@ DECIMAL_PRECISION_FOR_CURRENCY = CurrencyHelper().decimal_precision_for_currency
     Currency(g.company.accounts_currency_code)
 )
 
-EXAMPLE_MONEY_INPUT = "24." + DECIMAL_PRECISION_FOR_CURRENCY * "2"
+EXAMPLE_MONEY_INPUT = "0." + DECIMAL_PRECISION_FOR_CURRENCY * "0"
 # EXAMPLE_CURRENCY = (
 #     "Enter "
 #     + SUB_UNITS
