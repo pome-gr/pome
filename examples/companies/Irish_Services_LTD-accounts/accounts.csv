@@ -1,16 +1,10 @@
-0100; LC maths HL; INCOME
-0102; JC Maths HL; INCOME
-0200; Knowledge bases; INCOME
-0210; IT Consulting; INCOME
-0300; [SH] Support and integration; INCOME
-0400; [DK] Software programming; INCOME
+0000; Sales; INCOME
 2000; General expenses; EXPENSE
 2001; Website; EXPENSE
 2002; Computer Costs; EXPENSE 
 2003; Printing, postage and stationery; EXPENSE 
 2004; Telephone and broadband; EXPENSE 
 2005; Mileage and subsistence; EXPENSE 
-2006; Teaching expenses; EXPENSE 
 2007; Administrative fees; EXPENSE 
 2008; Legal fees; EXPENSE 
 2009; Payment fees; EXPENSE 
@@ -21,11 +15,9 @@
 6002; Account receivable; ASSET 
 6003; Bank; ASSET_OR_LIABILITY
 6004; Cash; ASSET 
-6005; Stripe account - Teaching; ASSET 
+6005; Stripe account; ASSET 
 6007; Disbursements; ASSET 
-7000; Tristan DLA; LIABILITY
+7000; DLA; LIABILITY
 7001; Accrued expenses; LIABILITY
 7002; Account payable; LIABILITY
-7003; Sébastien DLA; LIABILITY
-7004; Alexandre - DLA; LIABILITY
 7005; VAT; ASSET_OR_LIABILITY

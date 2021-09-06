@@ -4,9 +4,7 @@
 1063; Réserves statutaires ou contractuelles; EQUITY 
 1064; Réserves réglementées; EQUITY 
 1068; Autres réserves; EQUITY
-10810; Sébastien - Compte de l'exploitant; EQUITY 
-10811; Alexandre - Compte de l'exploitant: ; EQUITY 
-10812; Tristan - Compte de l'exploitant ; EQUITY 
+108; Compte de l'exploitant; EQUITY 
 12; Résultat de l'exercice (bénéfice ou perte); EQUITY
 145; Amortissements dérogatoires; ASSET
 146; Provision spéciale de réévaluation; ASSET 
@@ -64,7 +62,7 @@
 491;	Dépréciation des comptes de clients; ASSET 	
 496;	Dépréciation des comptes de débiteurs divers; ASSET 
 50;	Valeurs mobilières de placement; ASSET	
-51200; Quonto ; ASSET	 		
+512; Banque ; ASSET	 		
 53;	Caisse; ASSET	 
 54;	Régies d'avance et accréditifs; ASSET	 	 	
 58;	Virements internes; ASSET	 	
@@ -92,8 +90,7 @@
 695;	Impôts sur les bénéfices; EXPENSE	 	
 699;	Produits - Reports en arrière des déficits; EXPENSE	 	
 701;	Ventes de produits finis; INCOME	
-7061; 321 Founded - prestation de services; INCOME
-7062; Dévor - prestation de services; INCOME
+706;  Prestation de services; INCOME
 707;	Ventes de marchandises; INCOME	
 708;	Produits des activités annexes; INCOME 	
 709;	Rabais, remises et ristournes accordés par l'entreprise; EXPENSE 
