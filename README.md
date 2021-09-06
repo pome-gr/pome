@@ -9,7 +9,7 @@ Hence, it seems evident to us that:
 
 This is what pome offers.
 
-`pome`'s ambition is to give a framework for an open source ecosystem that will let businesses get the most out of their accounting data: we invite you to build your own pome's plugins to solve the accounting problems that you face.
+Our ambition is to give a framework for an open source ecosystem that will let businesses get the most out of their accounting data: we invite you to build your own pome's plugins to solve the accounting and business problems that you face.
 
 # How does pome work?
 
