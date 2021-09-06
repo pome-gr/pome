@@ -1,5 +1,9 @@
 # What is pome?
 
+`pome` is a decentralised, git-based, business accounting software.
+
+## Why pome?
+
 We believe that accounting data is one of the most valuable data of a business.   
 
 Hence, it seems evident to us that:
