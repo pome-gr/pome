@@ -17,9 +17,9 @@ Our ambition is to provide a framework for an ecosystem that will let businesses
 
 # How does pome work?
 
-`pome` reads and write accounting data on a [git repository](https://en.wikipedia.org/wiki/Git) which provides a powerful framework to collaboratively work on accounting data in a decentralised way.
+`pome` reads and write accounting data locally on your computer in a regular folder that is also a [git repository](https://en.wikipedia.org/wiki/Git). This approach provides a powerful framework to collaboratively work on accounting data in a decentralised way.
 
-`pome`provides a web UI that you can access from your browser.
+`pome` provides a web UI that you can access from your browser.
 
 # Getting started
 
