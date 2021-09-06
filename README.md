@@ -54,7 +54,7 @@ Then open your browser at [http://localholst:5000](http://localholst:5000) to la
 
 You can change pome's port by launching pome with the port as first argument: `pome <PORT_NUMBER>`.
 
-## Using a git remote repository
+## Using a remote git repository
 
 It is common and useful to host your git repository on a server that all your collaborators can access.
 Common ways to achieve this are to use services such as [https://github.com](https://github.com) or [https://gitlab.com](https://gitlab.com).
