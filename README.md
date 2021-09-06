@@ -59,4 +59,4 @@ You can change pome's port by launching pome with the port as first argument: `p
 It is common and useful to host your git repository on a server that all your collaborators can access.
 Common ways to achieve this are to use services such as [https://github.com](https://github.com) or [https://gitlab.com](https://gitlab.com).
 
-Once you have a remote setup, you can ask pome to pull and push automatically from it by setting `"git_communicate_with_remote": false` in `pome_settings.json` at the root of your company's account repository (create the file if it is not present but put in `.gitignore` if you don't want to propagate your settings to your collaborators). 
+Once you have a remote setup, you can ask pome to pull and push automatically from and to it by setting `"git_communicate_with_remote": true` in `pome_settings.json` at the root of your company's account repository (create the file if it is not present but put in `.gitignore` if you don't want to propagate your settings to your collaborators). 
