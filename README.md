@@ -7,7 +7,9 @@ Hence, it seems evident to us that:
 1. Entrepreneurs should own their accounting data and not depend on a cloud/software that owns the data for them   
 2. The accounting data should be written using a simple, documented and open human-readable format
 
-This is what pome offers together with an open source ecosystem to let businesses make the most of their accounting data.
+This is what pome offers.
+
+`pome`'s ambition is to give a framework for an open source ecosystem that will let businesses get the most out of their accounting data: we invite you to build your own pome's plugins to solve the accounting problems that you face.
 
 # How does pome work?
 
