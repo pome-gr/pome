@@ -57,7 +57,6 @@ def show_transaction(tx_id):
     if not tx_id in g.recorded_transactions:
         return abort(404)
 
-    print(g.recorded_transactions[tx_id])
     return render_template(
         "show_transaction.html",
         transaction=g.recorded_transactions[tx_id],
