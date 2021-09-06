@@ -33,7 +33,7 @@ pip install -r requirements.txt
 ln -s `pwd`/run_pome.py venv/bin/pome
 ```
 
-## Start your company's account repository
+## Start your company's pome account repository
 
 While still having pome's virtual environment activated and being in pome's folder:
 
