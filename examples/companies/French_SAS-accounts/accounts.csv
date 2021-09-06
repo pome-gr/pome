@@ -8,42 +8,42 @@
 12; Résultat de l'exercice (bénéfice ou perte); EQUITY
 145; Amortissements dérogatoires; ASSET
 146; Provision spéciale de réévaluation; ASSET 
-147; Plus-values réinvesties; ASSET 	
+147; Plus-values réinvesties; ASSET  
 148; Autres provisions réglementées; ASSET 
 15; Provisions; ASSET
 16; Emprunts et dettes assimilées; LIABILITY
-201; Frais d'établissement; ASSET	
+201; Frais d'établissement; ASSET 
 206; Droit au bail; ASSET
 207; Fonds commercial; ASSET
 208; Autres immobilisations incorporelles; ASSET 
-21;	Immobilisations corporelles; ASSET
-23;	Immobilisations en cours; ASSET	
-27;	Autres immobilisations financières; ASSET
-280; Amortissements des immobilisations incorporelles; ASSET	
-281; Amortissements des immobilisations corporelles; ASSET 	
-290; Dépréciations des immobilisations incorporelles; ASSET 	
-291; Dépréciations des immobilisations corporelles (même ventilation que celle du compte 21); ASSET 	
+21; Immobilisations corporelles; ASSET
+23; Immobilisations en cours; ASSET 
+27; Autres immobilisations financières; ASSET
+280; Amortissements des immobilisations incorporelles; ASSET 
+281; Amortissements des immobilisations corporelles; ASSET  
+290; Dépréciations des immobilisations incorporelles; ASSET  
+291; Dépréciations des immobilisations corporelles (même ventilation que celle du compte 21); ASSET  
 297; Dépréciations des autres immobilisations financières; ASSET
-31;	Matières premières (et fournitures); ASSET	
-32;	Autres approvisionnements; ASSET	
-33;	En-cours de production de biens; ASSET 	
-34;	En-cours de production de services; ASSET 	
-35;	Stocks de produits; ASSET	
-37;	Stocks de marchandises; ASSET
-391; Dépréciation des matières premières (et fournitures); ASSET	 	
-392; Dépréciation des autres approvisionnements; ASSET	 	
-393; Dépréciation des en-cours de production de biens; ASSET	 	
-394; Dépréciation des en-cours de production de services; ASSET	 	
-395; Dépréciation des stocks de produits; ASSET	 	
-397; Dépréciation des stocks de marchandises; ASSET			
+31; Matières premières (et fournitures); ASSET 
+32; Autres approvisionnements; ASSET 
+33; En-cours de production de biens; ASSET  
+34; En-cours de production de services; ASSET  
+35; Stocks de produits; ASSET 
+37; Stocks de marchandises; ASSET
+391; Dépréciation des matières premières (et fournitures); ASSET   
+392; Dépréciation des autres approvisionnements; ASSET   
+393; Dépréciation des en-cours de production de biens; ASSET   
+394; Dépréciation des en-cours de production de services; ASSET   
+395; Dépréciation des stocks de produits; ASSET   
+397; Dépréciation des stocks de marchandises; ASSET   
 400; Fournisseurs et Comptes rattachés; LIABILITY 
-409; Fournisseurs débiteurs; ASSET 	
+409; Fournisseurs débiteurs; ASSET  
 410; Clients et comptes rattachés; ASSET
 4191; Clients - Avances et acomptes reçus sur commandes; LIABILITY
-421; Personnel - Rémunérations dues; LIABILITY	
-428; Personnel - Charges à payer et produits à recevoir; LIABILITY	 
-43;	Sécurité sociale et autres organismes sociaux; ASSET	 	
-444; Etat - Impôts sur les bénéfices; ASSET_OR_LIABILITY 	
+421; Personnel - Rémunérations dues; LIABILITY 
+428; Personnel - Charges à payer et produits à recevoir; LIABILITY  
+43; Sécurité sociale et autres organismes sociaux; ASSET   
+444; Etat - Impôts sur les bénéfices; ASSET_OR_LIABILITY  
 4452; TVA due intracommunautaire; LIABILITY
 44562; TVA déductible sur immobilisations; ASSET
 44564; TVA déductible sur encaissements; ASSET
@@ -51,63 +51,63 @@
 44568; TVA déductible sur acquisition intracommunautaires; ASSET
 44571; TVA collectée; LIABILITY
 44574; TVA collectée sur encaissements; LIABILITY
-447; Autres impôts, taxes et versements assimilés; LIABILITY 	
-45;	Groupe et associés; ASSET_OR_LIABILITY
-455; Associés - Comptes courants; ASSET_OR_LIABILITY 	
-46;	Débiteurs divers et créditeurs divers; ASSET_OR_LIABILITY 	
-47;	Comptes transitoires ou d'attente; ASSET_OR_LIABILITY 	
-481;	Charges à répartir sur plusieurs exercices; ASSET 		
-486;	Charges constatées d'avance; ASSET 	
-487;	Produits constatés d'avance; ASSET 	
-491;	Dépréciation des comptes de clients; ASSET 	
-496;	Dépréciation des comptes de débiteurs divers; ASSET 
-50;	Valeurs mobilières de placement; ASSET	
-512; Banque ; ASSET	 		
-53;	Caisse; ASSET	 
-54;	Régies d'avance et accréditifs; ASSET	 	 	
-58;	Virements internes; ASSET	 	
-590; Dépréciation des valeurs mobilières de placement; ASSET 	
-60;	Achats (sauf 603); EXPENSE	
+447; Autres impôts, taxes et versements assimilés; LIABILITY  
+45; Groupe et associés; ASSET_OR_LIABILITY
+455; Associés - Comptes courants; ASSET_OR_LIABILITY  
+46; Débiteurs divers et créditeurs divers; ASSET_OR_LIABILITY  
+47; Comptes transitoires ou d'attente; ASSET_OR_LIABILITY  
+481; Charges à répartir sur plusieurs exercices; ASSET   
+486; Charges constatées d'avance; ASSET  
+487; Produits constatés d'avance; ASSET  
+491; Dépréciation des comptes de clients; ASSET  
+496; Dépréciation des comptes de débiteurs divers; ASSET 
+50; Valeurs mobilières de placement; ASSET 
+512; Banque ; ASSET    
+53; Caisse; ASSET  
+54; Régies d'avance et accréditifs; ASSET     
+58; Virements internes; ASSET   
+590; Dépréciation des valeurs mobilières de placement; ASSET  
+60; Achats (sauf 603); EXPENSE 
 603; Variations des stocks (approvisionnements et marchandises); EXPENSE
 610; Services extérieurs; EXPENSE
-613; Locations; EXPENSE	
-6226;	Honoraires; EXPENSE	
-6227; Frais d'actes et de contentieux; EXPENSE	
+613; Locations; EXPENSE 
+6226; Honoraires; EXPENSE 
+6227; Frais d'actes et de contentieux; EXPENSE 
 6231; Annonces et insertions; EXPENSE
 627; Services bancaires et assimilés; EXPENSE
 6354; Droits d'enregistrement et de timbre; EXPENSE
-641; Rémunérations du personnel; EXPENSE 	
-644; Rémunération du travail de l'exploitant; EXPENSE 	
-645; Charges de sécurité sociale et de prévoyance; EXPENSE 	
-646; Cotisations sociales personnelles de l'exploitant; EXPENSE 	
-65;	Autres charges de gestion courante; EXPENSE 	
-66;	Charges financières; EXPENSE	
-67;	Charges exceptionnelles; EXPENSE	
-681;	Dotations aux amortissements, aux dépréciations et aux provisions - Charges d'exploitation; EXPENSE	
-686;	Dotations aux amortissements, aux dépréciations et aux provisions - Charges financières; EXPENSE		
-687;	Dotations aux amortissements, aux dépréciations et aux provisions - Charges exceptionnelles; EXPENSE		
-691;	Participation des salariés aux résultats; EXPENSE	 	
-695;	Impôts sur les bénéfices; EXPENSE	 	
-699;	Produits - Reports en arrière des déficits; EXPENSE	 	
-701;	Ventes de produits finis; INCOME	
+641; Rémunérations du personnel; EXPENSE  
+644; Rémunération du travail de l'exploitant; EXPENSE  
+645; Charges de sécurité sociale et de prévoyance; EXPENSE  
+646; Cotisations sociales personnelles de l'exploitant; EXPENSE  
+65; Autres charges de gestion courante; EXPENSE  
+66; Charges financières; EXPENSE 
+67; Charges exceptionnelles; EXPENSE 
+681; Dotations aux amortissements, aux dépréciations et aux provisions - Charges d'exploitation; EXPENSE 
+686; Dotations aux amortissements, aux dépréciations et aux provisions - Charges financières; EXPENSE  
+687; Dotations aux amortissements, aux dépréciations et aux provisions - Charges exceptionnelles; EXPENSE  
+691; Participation des salariés aux résultats; EXPENSE   
+695; Impôts sur les bénéfices; EXPENSE   
+699; Produits - Reports en arrière des déficits; EXPENSE   
+701; Ventes de produits finis; INCOME 
 706;  Prestation de services; INCOME
-707;	Ventes de marchandises; INCOME	
-708;	Produits des activités annexes; INCOME 	
-709;	Rabais, remises et ristournes accordés par l'entreprise; EXPENSE 
+707; Ventes de marchandises; INCOME 
+708; Produits des activités annexes; INCOME  
+709; Rabais, remises et ristournes accordés par l'entreprise; EXPENSE 
 713; Variation des stocks (en-cours de production, produits); EXPENSE
-72;	Production immobilisée; EXPENSE	
-74;	Subventions d'exploitation; INCOME	
-75;	Autres produits de gestion courante; INCOME 	
-753;	Jetons de présence et rémunérations d'administrateurs, gérants; INCOME 
+72; Production immobilisée; EXPENSE 
+74; Subventions d'exploitation; INCOME 
+75; Autres produits de gestion courante; INCOME  
+753; Jetons de présence et rémunérations d'administrateurs, gérants; INCOME 
 754; Ristournes perçues des coopératives (provenant des excédents); INCOME  
-755; Quotes-parts de résultat sur opérations faites en commun; INCOME 	
-76;	Produits financiers; INCOME
-77;	Produits exceptionnels; INCOME	
-781;	Reprises sur amortissements, dépréciations et provisions (à inscrire dans les produits d'exploitation); INCOME	
-786;	Reprises sur provisions pour risques et dépréciations (à inscrire dans les produits financiers); INCOME	
+755; Quotes-parts de résultat sur opérations faites en commun; INCOME  
+76; Produits financiers; INCOME
+77; Produits exceptionnels; INCOME 
+781; Reprises sur amortissements, dépréciations et provisions (à inscrire dans les produits d'exploitation); INCOME 
+786; Reprises sur provisions pour risques et dépréciations (à inscrire dans les produits financiers); INCOME 
 787; Reprises sur provisions et dépréciations (à inscrire dans les produits exceptionnels); INCOME
 79; Transferts de charges; INCOME
-801;	Engagements donnés par l'entité*; LIABILITY	
-802;	Engagements recus par l'entité*; ASSET	
-809;	Contrepartie des engagements*; ASSET	
-88;	Résultat en instance d'affectation*; EQUITY	
+801; Engagements donnés par l'entité*; LIABILITY 
+802; Engagements recus par l'entité*; ASSET 
+809; Contrepartie des engagements*; ASSET 
+88; Résultat en instance d'affectation*; EQUITY 
