@@ -1,0 +1,16 @@
+{
+  "name": "SAS FRENCH SERVICES",
+  "registration_country_code": "FR",
+  "registration_id": "",
+  "date_of_incorporation": "2021-07-08",
+  "financial_year_end": "31/12",
+  "annual_return_date": "31/12",
+  "registered_address": {
+    "line_1": "55 Rue du Faubourg Saint-Honoré",
+    "city": "Paris",
+    "postal_code": "75008"
+  },
+  "vat_number": "",
+  "accounts_currency_code": "EUR",
+  "locale": "fr_FR"
+}

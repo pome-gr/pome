@@ -1,0 +1,54 @@
+{
+  "sections": [
+    {
+      "prefix": "0",
+      "name": "Sales"
+    },
+    {
+      "prefix": "1",
+      "name": "Cost of sales"
+    },
+    {
+      "prefix": "2",
+      "name": "Expenses"
+    },
+    {
+      "prefix": "3",
+      "name": "Other income"
+    },
+    {
+      "prefix": "4",
+      "name": "Equity"
+    },
+    {
+      "prefix": "5",
+      "name": "Non-current assets"
+    },
+    {
+      "prefix": "6",
+      "name": "Current assets"
+    },
+    {
+      "prefix": "7",
+      "name": "Current liabilities"
+    },
+    {
+      "prefix": "8",
+      "name": "Non-current liabilities"
+    }
+  ],
+
+  "accounts_csv_file": "accounts.csv",
+  "bank_accounts_details": [
+    {
+      "code": "6003",
+      "bank_details": {
+        "bank": "AIB",
+        "IBAN": "",
+        "BIC": "",
+        "account_number": "",
+        "sort_code": ""
+      }
+    }
+  ]
+}

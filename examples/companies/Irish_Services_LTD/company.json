@@ -1,0 +1,17 @@
+{
+  "name": "IRISH SERVICES LTD.",
+  "registration_country_code": "IE",
+  "registration_id": "",
+  "date_of_incorporation": "2020-01-21",
+  "financial_year_end": "31/12",
+  "annual_return_date": "21/07",
+  "registered_address": {
+    "line_1": "Mansion House",
+    "line_2": "Dawson St",
+    "city": "DUBLIN",
+    "postal_code": ""
+  },
+  "vat_number": "",
+  "accounts_currency_code": "EUR",
+  "locale": "en_IE"
+}

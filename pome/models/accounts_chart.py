@@ -187,6 +187,8 @@ class AccountsChart(PomeEncodable):
             self.accounts = []
 
             for csv_line in csv_content.split("\n"):
+                if csv_line.strip() == "":
+                    continue
                 csv_entries = csv_line.split(";")
                 if len(csv_entries) != 3:
                     # TODO: make error appear on frontend?

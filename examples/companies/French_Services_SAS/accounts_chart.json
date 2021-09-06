@@ -1,0 +1,176 @@
+{
+  "sections": [
+    {
+      "prefix": "1",
+      "name": "Comptes de capitaux"
+    },
+    {
+      "prefix": "10",
+      "name": "Comptes de capitaux"
+    },
+    {
+      "prefix": "106",
+      "name": "Réserves"
+    },
+    {
+      "prefix": "108",
+      "name": "Compte de l'exploitant"
+    },
+    {
+      "prefix": "14",
+      "name": "Provision réglementées"
+    },
+    {
+      "prefix": "2",
+      "name": "Comptes d'immobilisations"
+    },
+    {
+      "prefix": "20",
+      "name": "Immobilisations incorporelles"
+    },
+    {
+      "prefix": "28",
+      "name": "Amortissements des immobilisations"
+    },
+    {
+      "prefix": "29",
+      "name": "Dépréciation des immobilisations"
+    },
+    {
+      "prefix": "3",
+      "name": "Comptes de stock et en-cours"
+    },
+    {
+      "prefix": "39",
+      "name": "Provisions pour dépréciation des stocks et en-cours"
+    },
+    {
+      "prefix": "4",
+      "name": "Comptes de tiers"
+    },
+    {
+      "prefix": "40",
+      "name": "Fournisseurs et comptes rattachés"
+    },
+    {
+      "prefix": "41",
+      "name": "Clients et comptes rattachés"
+    },
+    {
+      "prefix": "42",
+      "name": "Personnel et comptes rattachés"
+    },
+    {
+      "prefix": "44",
+      "name": "État et autres collectivités publiques"
+    },
+    {
+      "prefix": "445",
+      "name": "État - Taxes sur le chiffre d'affaires"
+    },
+    {
+      "prefix": "48",
+      "name": "Comptes de régularisation"
+    },
+    {
+      "prefix": "49",
+      "name": "Provisions pour dépréciation des comptes de tiers"
+    },
+    {
+      "prefix": "5",
+      "name": "Comptes financiers"
+    },
+    {
+      "prefix": "51",
+      "name": "Banques, établissements financiers et assimilés"
+    },
+    {
+      "prefix": "59",
+      "name": "Provisions pour dépréciation des comptes financiers"
+    },
+    {
+      "prefix": "6",
+      "name": "Comptes de charges"
+    },
+    {
+      "prefix": "61",
+      "name": "Services extérieurs"
+    },
+    {
+      "prefix": "62",
+      "name": "Autres services extérieurs"
+    },
+    {
+      "prefix": "622",
+      "name": "Rémunérations d'intermédiaires et honoraires"
+    },
+    {
+      "prefix": "623",
+      "name": "Publicité, publications, relations publiques"
+    },
+    {
+      "prefix": "63",
+      "name": "Impôts, taxes et versements assimilés"
+    },
+    {
+      "prefix": "635",
+      "name": "Autres impôts, taxes et versements assimilés (administrations des impôts)"
+    },
+    {
+      "prefix": "64",
+      "name": "Charges de personnel"
+    },
+    {
+      "prefix": "68",
+      "name": "Dotations aux amortissements et aux provisions"
+    },
+    {
+      "prefix": "69",
+      "name": "Participation des salariés - impôts sur les bénéfices et assimilés"
+    },
+    {
+      "prefix": "7",
+      "name": "Comptes de produits"
+    },
+    {
+      "prefix": "70",
+      "name": "Ventes de produits fabriqués, prestations de services, marchandises"
+    },
+    {
+      "prefix": "706",
+      "name": "Prestation de services"
+    },
+    {
+      "prefix": "71",
+      "name": "Production stockée (ou déstockage)"
+    },
+    {
+      "prefix": "75",
+      "name": "Autres produits de gestion courante"
+    },
+    {
+      "prefix": "78",
+      "name": "Reprises sur amortissements et provisions"
+    },
+    {
+      "prefix": "8",
+      "name": "Comptes spéciaux"
+    },
+    {
+      "prefix": "80",
+      "name": "Engagements"
+    }
+  ],
+
+  "accounts_csv_file": "accounts.csv",
+  "bank_accounts_details": [
+    {
+      "code": "51200",
+      "bank_details": {
+        "bank": "",
+        "IBAN": "",
+        "BIC": ""
+      }
+    }
+  ]
+}
