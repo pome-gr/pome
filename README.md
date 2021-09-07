@@ -6,14 +6,14 @@
 
 We believe that accounting data is one of the most valuable data of a business.   
 
-Hence, it seems evident to us that:
+Hence, it seems crucial to us that:
 
 1. Entrepreneurs should own their accounting data and not depend on a cloud/software that owns the data for them   
 2. The accounting data should be written using a simple, documented and open human-readable format
 
 This is what pome offers.
 
-Our ambition is to provide a framework for an ecosystem that will let businesses get the most out of their accounting data: we invite you to build your own pome's plugins in order to solve the accounting and business problems that you face.
+Our ambition is to provide the framework for an ecosystem that will let businesses get the most out of their accounting data.
 
 # How does pome work?
 
