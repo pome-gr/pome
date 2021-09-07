@@ -8,7 +8,7 @@ We believe that accounting data is one of the most valuable data of a business.
 
 Hence, it seems crucial to us that:
 
-1. Entrepreneurs should own their accounting data and not depend on a cloud/software that owns the data for them   
+1. Entrepreneurs should own their accounting data and not depend on a third-party cloud to access them. 
 2. The accounting data should be written using a simple, documented and open human-readable format
 
 This is what pome offers.
