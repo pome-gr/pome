@@ -25,16 +25,12 @@ Our ambition is to provide the framework for an ecosystem that will let business
 
 ## Install pome
 
-`pome` latest release is `v0.0.1`.
+`pome` latest release is `v0.0.1` and requires Python 3.9.
+
+We recommend running the below command in a Python 3.9 [virtual environment](https://realpython.com/python-virtual-environments-a-primer/).
 
 ```
-git clone https://github.com/pome-gr/pome.git
-cd pome
-git checkout tags/v0.0.1 -b v0.0.1-branch
-python3.9 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-ln -s `pwd`/run_pome.py venv/bin/pome
+pip3.9 install pome
 ```
 
 ## Start your company's accounts pome repository

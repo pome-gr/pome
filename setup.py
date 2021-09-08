@@ -33,6 +33,8 @@ if not os.path.exists("scripts"):
     os.makedirs("scripts")
 shutil.copyfile("run_pome.py", "scripts/pome")
 
+with open("README.md", "r") as f:
+    long_description = f.read()
 
 setuptools.setup(
     name="pome",
@@ -41,6 +43,8 @@ setuptools.setup(
     author="Tristan Stérin",
     author_email="tristan@prgm.dev",
     description="Decentralised, git-based, accounting software.",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     url="https://github.com/pome-gr/pome",
     packages=setuptools.find_packages(),
     install_requires=install_requires,
