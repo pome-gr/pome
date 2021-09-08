@@ -1,4 +1,4 @@
-<div style="text-align: center">
+<div style="text-align: center; width: full; margin: auto;">
 <a href="https://pome.gr/">
 <img src="https://pome.gr/assets/pome-round.png" width="90px"/>
 </a>
