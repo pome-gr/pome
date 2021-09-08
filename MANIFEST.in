@@ -1,2 +1,3 @@
 include pome/static/*
 include pome/templates/*
+include requirements.txt
