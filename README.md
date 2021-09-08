@@ -35,9 +35,11 @@ pip3.9 install pome
 
 ## Start your company's accounts pome repository
 
-While still having pome's virtual environment activated and being in pome's folder:
+You can use example companies to get started:
 
 ```
+git clone https://github.com/pome-gr/pome.git
+cd pome
 cp -r examples/companies/<choose_your_example_company> /path/to/your/new/company/repository
 cd /path/to/your/new/company/repository
 git init
