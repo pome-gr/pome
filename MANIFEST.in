@@ -1,0 +1,2 @@
+include pome/static/*
+include pome/templates/*
