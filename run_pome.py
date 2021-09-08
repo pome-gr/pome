@@ -1,5 +1,6 @@
-#!python
+#!python3.9
 import sys
+
 from pome import app
 
 PORT = 5000

@@ -1,7 +1,7 @@
 import os
 from typing import Any, List
 
-from flask import abort, render_template, request, send_file, flash, Markup
+from flask import Markup, abort, flash, render_template, request, send_file
 from git import GitCommandError
 
 from pome import app, g, git, global_pull

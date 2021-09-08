@@ -1,11 +1,10 @@
-from typing import Dict, List, Union, Tuple
+from typing import Dict, List, Tuple, Union
 
 from money.currency import Currency
+from money.money import Money
 
 from pome.misc import get_longest_matching_prefix
 from pome.models.encoder import PomeEncodable
-
-from money.money import Money
 
 
 class BankDetails(PomeEncodable):

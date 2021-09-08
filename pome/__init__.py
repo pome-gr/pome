@@ -70,11 +70,8 @@ if git is not None and g.settings.git_communicate_with_remote:
 print("Sync state from disk")
 g.sync_from_disk()
 
-from pome.currency import (
-    CURRENCY_SYMBOL,
-    DECIMAL_PRECISION_FOR_CURRENCY,
-    EXAMPLE_MONEY_INPUT,
-)
+from pome.currency import (CURRENCY_SYMBOL, DECIMAL_PRECISION_FOR_CURRENCY,
+                           EXAMPLE_MONEY_INPUT)
 
 app.jinja_env.globals["CURRENCY_SYMBOL"] = CURRENCY_SYMBOL
 app.jinja_env.globals["EXAMPLE_MONEY_INPUT"] = EXAMPLE_MONEY_INPUT

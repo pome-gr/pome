@@ -1,5 +1,7 @@
 node_modules
+distvenv
 .DS_Store
+scripts/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
