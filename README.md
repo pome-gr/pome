@@ -1,3 +1,9 @@
+<div style="text-align: center">
+<a href="https://pome.gr/">
+<img src="https://pome.gr/assets/pome-round.png" width="90px"/>
+</a>
+</div>
+
 # What is pome?
 
 `pome` is a decentralised, git-based, business accounting software.
@@ -25,7 +31,7 @@ Our ambition is to provide the framework for an ecosystem that will let business
 
 ## Install pome
 
-`pome` latest release is `v0.0.1` and requires Python 3.9.
+`pome` requires Python 3.9.
 
 We recommend running the below command in a Python 3.9 [virtual environment](https://realpython.com/python-virtual-environments-a-primer/).
 
