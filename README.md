@@ -4,7 +4,7 @@
 
 # What is pome?
 
-`pome` is a decentralised, git-based, business accounting software.
+`pome` is a distributed accounting software.
 
 ## Why pome?
 
@@ -21,7 +21,7 @@ Our ambition is to provide the framework for an ecosystem that will let business
 
 # How does pome work?
 
-`pome` reads and write accounting data locally on your computer in a regular folder that is also a [git repository](https://en.wikipedia.org/wiki/Git). This approach provides a powerful framework to collaboratively work on accounting data in a decentralised way.
+`pome` reads and write accounting data locally on your computer in a regular folder that is also a [git repository](https://en.wikipedia.org/wiki/Git). This approach provides a powerful framework to collaboratively work on accounting data in a distributed way.
 
 `pome` provides a web UI that you can access from your browser.
 

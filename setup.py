@@ -42,7 +42,7 @@ setuptools.setup(
     scripts=["scripts/pome"],
     author="Tristan Stérin",
     author_email="tristan@prgm.dev",
-    description="Decentralised, git-based, accounting software.",
+    description="Distributed accounting software",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/pome-gr/pome",
