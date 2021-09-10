@@ -122,3 +122,8 @@ def pull():
         return str(e), 400
 
     return "ok"
+
+
+@app.route("/metrics", methods=["GET"])
+def metrics():
+    return render_template("metrics.html")

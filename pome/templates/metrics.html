@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block main_title %}
+Metrics
+{% endblock %}
+
+{% block content_header %}
+<a href="/"><span class="normal-link">← Back to accounts</span></a>
+{% endblock %}
+
+{% block content %}
+
+<div class="mt-4 flex items-center">
+  <div class="flex flex-col items-end mr-4">
+
+    <div class="text-xl">Turnover</div>
+    <div class="text-xl">Total expenses</div>
+    <div class="text-xl">Net profit</div>
+  </div>
+  <div>
+
+    <div class="pl-3 text-xl">{{accounts_chart.total_balance_for_account_type("INCOME").format(company.locale)}}</div>
+    <div class="pl-3 text-xl">{{accounts_chart.total_balance_for_account_type("EXPENSE").format(company.locale)}}</div>
+    <div class="pl-3 text-xl">
+      {{(accounts_chart.total_balance_for_account_type("INCOME")-accounts_chart.total_balance_for_account_type("EXPENSE")).format(company.locale)}}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

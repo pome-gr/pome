@@ -159,6 +159,16 @@ class AccountsChart(PomeEncodable):
         self.account_codes = None
         pass
 
+    def total_balance_for_account_type(self, account_type):
+        to_return = None
+        for acc in self.accounts:
+            if acc.type == account_type:
+                if to_return is None:
+                    to_return = acc.balance(algebrised=True)
+                else:
+                    to_return += acc.balance(algebrised=True)
+        return to_return
+
     def are_all_accounts_used(self) -> bool:
         for acc in self.accounts:
             if not acc.is_used():
