@@ -52,6 +52,7 @@ class Company(PomeEncodable):
         self.current_accounting_period = current_accounting_period
 
     def _post_load_json(self):
-        self.current_accounting_period = AccountingPeriod.from_json_dict(
-            self.current_accounting_period
-        )
+        if self.current_accounting_period:
+            self.current_accounting_period = AccountingPeriod.from_json_dict(
+                self.current_accounting_period
+            )

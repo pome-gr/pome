@@ -38,6 +38,10 @@ class Amount(PomeEncodable):
         return to_ret.format(g.company.locale)
 
     @classmethod
+    def from_Money(cls, money: Money):
+        return cls(str(money.currency.value), str(money.amount))
+
+    @classmethod
     def from_payload(cls, payload: str):
         try:
             return cls(g.company.accounts_currency_code, payload)
@@ -76,15 +80,26 @@ class TransactionAttachmentPayload(PomeEncodable):
 
 
 class TransactionLine(PomeEncodable):
-    def __init__(self, account_dr_code: str, account_cr_code: str, amount: Amount):
-        self.account_dr_code: str = account_dr_code
-        self.account_cr_code: str = account_cr_code
+    def __init__(
+        self,
+        account_dr_code: Union[str, None],
+        account_cr_code: Union[str, None],
+        amount: Amount,
+    ):
+        self.account_dr_code: Union[str, None] = account_dr_code
+        self.account_cr_code: Union[str, None] = account_cr_code
         self.amount: Amount = amount
 
-        if not g.accounts_chart.is_valid_account_code(self.account_dr_code):
+        if (
+            not self.account_dr_code is None
+            and not g.accounts_chart.is_valid_account_code(self.account_dr_code)
+        ):
             raise ValueError(f"Invalid dr account code {self.account_dr_code }")
 
-        if not g.accounts_chart.is_valid_account_code(self.account_cr_code):
+        if (
+            not self.account_cr_code is None
+            and not g.accounts_chart.is_valid_account_code(self.account_cr_code)
+        ):
             raise ValueError(f"Invalid cr account code {self.account_cr_code}")
 
     def _post_load_json(self):
@@ -140,12 +155,14 @@ class Transaction(PomeEncodable):
         self.comments: str = comments
         self.id: Union[None, str] = id
 
-        if not validate_date(self.date):
+        if not self.date is None and not validate_date(self.date):
             raise ValueError(
                 f"Invalid date {self.date}. A valid date is yyyy-mm-dd, for instance 2021-08-30."
             )
 
-        if not validate_date(self.date_recorded, True):
+        if not self.date_recorded is None and not validate_date(
+            self.date_recorded, True
+        ):
             raise ValueError(
                 f"Invalid record date {self.date_recorded}. A valid date record date is ISO8601, for instance 2008-08-30T01:45:36.123Z."
             )

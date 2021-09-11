@@ -1,12 +1,19 @@
 import os
 from typing import Any, List
 
-from flask import Markup, abort, flash, render_template, request, send_file
+from flask import Markup, abort, flash, render_template, request, send_file, Response
 from git import GitCommandError
 
 from pome import app, g, git, global_pull
 from pome.misc import get_recursive_json_hash
-from pome.models.transaction import RECORDED_TX_FOLDER_NAME, Transaction
+from pome.models.transaction import (
+    RECORDED_TX_FOLDER_NAME,
+    Transaction,
+    TransactionLine,
+    Amount,
+)
+
+import datetime
 
 LAST_HASH = get_recursive_json_hash()
 
@@ -127,3 +134,123 @@ def pull():
 @app.route("/metrics", methods=["GET"])
 def metrics():
     return render_template("metrics.html")
+
+
+@app.route("/eoy", methods=["GET"])
+def eoy():
+    return render_template("end-of-year.html")
+
+
+@app.route("/eoy/transaction-profit-or-loss", methods=["GET"])
+def eoy_profit_or_loss():
+    narrative = "Profit or loss"
+    if g.company.current_accounting_period is not None:
+        narrative += " for the year ended " + g.company.current_accounting_period.end
+
+    transaction_lines: List[TransactionLine] = []
+
+    for acc in g.accounts_chart.accounts:
+        if acc.type == "INCOME":
+            transaction_lines.append(
+                TransactionLine(
+                    acc.code,
+                    g.accounts_chart.account_profit_or_loss,
+                    Amount.from_Money(acc.balance(algebrised=True)),
+                )
+            )
+        elif acc.type == "EXPENSE":
+            transaction_lines.append(
+                TransactionLine(
+                    g.accounts_chart.account_profit_or_loss,
+                    acc.code,
+                    Amount.from_Money(acc.balance(algebrised=True)),
+                ),
+            )
+
+    tx_date = None
+    if g.company.current_accounting_period is not None:
+        tx_date = g.company.current_accounting_period.end
+
+    to_return = Transaction(tx_date, transaction_lines, [], narrative=narrative)
+
+    return Response(to_return.to_json(), status=200, mimetype="application/json")
+
+
+@app.route("/eoy/transactions-closing-and-opening", methods=["GET"])
+def eoy_closing_and_closing():
+
+    lines_closing: List[TransactionLine] = []
+    lines_opening: List[TransactionLine] = []
+
+    for acc in g.accounts_chart.accounts:
+
+        winning_side = ""
+        if acc.type == "ASSET_OR_LIABILITY":
+            winning_side = acc.balance()[1]
+
+        if acc.type == "ASSET" or (
+            acc.type == "ASSET_OR_LIABILITY" and winning_side == "DR"
+        ):
+            lines_closing.append(
+                TransactionLine(
+                    g.accounts_chart.account_closing_balances,
+                    acc.code,
+                    Amount.from_Money(acc.balance(algebrised=True)),
+                )
+            )
+            lines_opening.append(
+                TransactionLine(
+                    acc.code,
+                    g.accounts_chart.account_closing_balances,
+                    Amount.from_Money(acc.balance(algebrised=True)),
+                )
+            )
+        elif (
+            acc.type == "LIABILITY"
+            or acc.type == "EQUITY"
+            or (acc.type == "ASSET_OR_LIABILITY" and winning_side == "CR")
+        ):
+            lines_closing.append(
+                TransactionLine(
+                    acc.code,
+                    g.accounts_chart.account_closing_balances,
+                    Amount.from_Money(acc.balance(algebrised=True)),
+                )
+            )
+            lines_opening.append(
+                TransactionLine(
+                    g.accounts_chart.account_closing_balances,
+                    acc.code,
+                    Amount.from_Money(acc.balance(algebrised=True)),
+                )
+            )
+
+    tx_closing_date = None
+    if g.company.current_accounting_period is not None:
+        tx_closing_date = g.company.current_accounting_period.end
+
+    tx_opening_date = None
+    if g.company.current_accounting_period is not None:
+        closing_date_obj = datetime.datetime.strptime(tx_closing_date, "%Y-%m-%d")
+        opening_date_obj = closing_date_obj + datetime.timedelta(days=1)
+        tx_opening_date = opening_date_obj.strftime("%Y-%m-%d")
+
+    narrative_closing = "balances for the year"
+    narrative_opening = "balances for the year"
+    if g.company.current_accounting_period.end is not None:
+        narrative_closing += " ended " + g.company.current_accounting_period.end
+        narrative_opening += " started " + tx_opening_date
+
+    closing_tx = Transaction(
+        tx_closing_date, lines_closing, [], narrative="Closing " + narrative_closing
+    )
+
+    opening_tx = Transaction(
+        tx_opening_date, lines_opening, [], narrative="Opening " + narrative_opening
+    )
+
+    return Response(
+        closing_tx.to_json() + "\n" + opening_tx.to_json(),
+        status=200,
+        mimetype="application/json",
+    )
