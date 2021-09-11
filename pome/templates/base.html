@@ -30,19 +30,25 @@
     </header>
     <div class="flex flex-col items-start">
       <div class="mt-5 inline-block">
-        {% set classes_nav_items = "mb-2 p-2 text-lg bg-blue-500 cursor-pointer hover:bg-blue-400" %}
+        {% set classes_nav_items = "mb-2 p-2 text-lg bg-blue-500 cursor-pointer hover:bg-blue-400 flex items-center
+        space-x-2" %}
         {% set classes_nav_emojis = "mr-1" %}
         <a href="/">
-          <div class="{{classes_nav_items}}"><span class="{{classes_nav_emojis}}">📒</span> Accounts</div>
+          <div class="{{classes_nav_items}}"><span class="{{classes_nav_emojis}}">📒</span><span>Accounts</span></div>
         </a>
         <a href="/journal">
-          <div class="{{classes_nav_items}}"><span class="{{classes_nav_emojis}}">📝</span> Journal</div>
+          <div class="{{classes_nav_items}}"><span class="{{classes_nav_emojis}}">📝</span> <span>Journal</span></div>
         </a>
         <a href="/metrics">
-          <div class="{{classes_nav_items}}"><span class="{{classes_nav_emojis}}">📈</span> Metrics</div>
+          <div class="{{classes_nav_items}}"><span class="{{classes_nav_emojis}}">📈</span> <span>Metrics</span></div>
+        </a>
+        <a href="/eoy">
+          <div class="{{classes_nav_items}}"><span class="{{classes_nav_emojis}}">🔚</span> <span>End of year</span>
+          </div>
         </a>
         <a href="/company">
-          <div class="{{classes_nav_items}}"><span class="{{classes_nav_emojis}}">⚙️</span> Company details</div>
+          <div class="{{classes_nav_items}}"><span class="{{classes_nav_emojis}}">⚙️</span> <span>Company details</span>
+          </div>
         </a>
       </div>
       <div class="mt-5 flex w-full justify-start items-center space-x-4">

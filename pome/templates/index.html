@@ -73,10 +73,10 @@ No accounts found. Refer to pome's doc for example accounts charts.
         {% set acc = accounts_chart.account_codes[account_code]%}
         <tr class="{% if not acc.is_used() %} hidden {% endif %}" {% if not acc.is_used() %} data-unused {%endif%}>
           <td>{{acc.code}}</td>
-          <td style="width: 490px;"><a href="/accounts/{{acc.code}}" class="normal-link">{{acc.name}}</a></td>
-          <td><span class="cursor-default"
+          <td style="width: 460px;"><a href="/accounts/{{acc.code}}" class="normal-link">{{acc.name}}</a></td>
+          <td style="width:240px;"><span class="cursor-default"
               title="{{acc.balance(formatted=True, algebrised=False)}}">{{acc.balance(formatted=True,
-              algebrised=True)}}</span>
+              algebrised=acc.type != "ASSET_OR_LIABILITY")}}</span>
           </td>
         </tr>
         {% endfor %}

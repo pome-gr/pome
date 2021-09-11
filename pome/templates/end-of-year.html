@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block main_title %}
+End of year
+{% endblock %}
+
+{% block content_header %}
+<a href="/"><span class="normal-link">← Back to accounts</span></a>
+{% endblock %}
+
+{% block content %}
+
+{% if company.current_accounting_period %}
+<div class="mb-8">
+  <h2 class="text-2xl">Current accounting period</h2>
+  <div class="pt-3">
+    <table>
+      <tbody>
+        <tr>
+          <td>From</td>
+          <td class="pl-5" data-date={{company.current_accounting_period.begin}}></td>
+        </tr>
+        <tr>
+          <td>To</td>
+          <td class="pl-5" data-date={{company.current_accounting_period.end}}></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+<div>
+  <h2 class="text-2xl mb-5">End of year transactions</h2>
+  <div class="mb-5">
+    {% if accounts_chart.account_profit_or_loss %}
+    <a href="/eoy/transaction-profit-or-loss">
+      <div class="btn btn-success text-lg">Generate Profit or Loss transaction</div>
+    </a>
+    {% else %}
+    <div class="btn btn-success disabled text-lg">Please specify field `account_profit_or_loss` of your account chart.
+    </div>
+    {% endif %}
+  </div>
+  {% if accounts_chart.account_closing_balances %}
+  <div class="btn btn-success text-lg">Generate Closing and Opening Balances transaction</div>
+  {% else %}
+  <div class="btn btn-success disabled text-lg">Please specify field `account_closing_balances` of your account chart.
+  </div>
+  {% endif %}
+</div>
+
+<script lang="js">
+  mountDates();
+</script>
+
+{% endblock %}

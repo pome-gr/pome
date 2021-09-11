@@ -11,6 +11,7 @@ from werkzeug.utils import secure_filename
 
 from pome import g
 from pome.models.encoder import PomeEncodable
+from pome.models.validation import validate_date
 
 RECORDED_TX_FOLDER_NAME = os.path.join("transactions", "recorded")
 
@@ -35,6 +36,10 @@ class Amount(PomeEncodable):
         if not formatted:
             return to_ret
         return to_ret.format(g.company.locale)
+
+    @classmethod
+    def from_Money(cls, money: Money):
+        return cls(str(money.currency.value), str(money.amount))
 
     @classmethod
     def from_payload(cls, payload: str):
@@ -75,15 +80,26 @@ class TransactionAttachmentPayload(PomeEncodable):
 
 
 class TransactionLine(PomeEncodable):
-    def __init__(self, account_dr_code: str, account_cr_code: str, amount: Amount):
-        self.account_dr_code: str = account_dr_code
-        self.account_cr_code: str = account_cr_code
+    def __init__(
+        self,
+        account_dr_code: Union[str, None],
+        account_cr_code: Union[str, None],
+        amount: Amount,
+    ):
+        self.account_dr_code: Union[str, None] = account_dr_code
+        self.account_cr_code: Union[str, None] = account_cr_code
         self.amount: Amount = amount
 
-        if not g.accounts_chart.is_valid_account_code(self.account_dr_code):
+        if (
+            not self.account_dr_code is None
+            and not g.accounts_chart.is_valid_account_code(self.account_dr_code)
+        ):
             raise ValueError(f"Invalid dr account code {self.account_dr_code }")
 
-        if not g.accounts_chart.is_valid_account_code(self.account_cr_code):
+        if (
+            not self.account_cr_code is None
+            and not g.accounts_chart.is_valid_account_code(self.account_cr_code)
+        ):
             raise ValueError(f"Invalid cr account code {self.account_cr_code}")
 
     def _post_load_json(self):
@@ -139,12 +155,14 @@ class Transaction(PomeEncodable):
         self.comments: str = comments
         self.id: Union[None, str] = id
 
-        if not self.validate_date(self.date):
+        if not self.date is None and not validate_date(self.date):
             raise ValueError(
                 f"Invalid date {self.date}. A valid date is yyyy-mm-dd, for instance 2021-08-30."
             )
 
-        if not self.validate_date(self.date_recorded, True):
+        if not self.date_recorded is None and not validate_date(
+            self.date_recorded, True
+        ):
             raise ValueError(
                 f"Invalid record date {self.date_recorded}. A valid date record date is ISO8601, for instance 2008-08-30T01:45:36.123Z."
             )
@@ -266,16 +284,6 @@ class Transaction(PomeEncodable):
                         self.get_tx_path()
                     )
             f.write(self.to_json())
-
-    regex_date = re.compile("^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$")
-    regex_ISO8601 = re.compile(
-        "^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\.[0-9]+)?(Z|[+-](?:2[0-3]|[01][0-9]):[0-5][0-9])?$"
-    )
-
-    @classmethod
-    def validate_date(cls, date_str, ISO8601=False):
-        p = cls.regex_date if not ISO8601 else cls.regex_ISO8601
-        return bool(p.fullmatch(date_str))
 
     @classmethod
     def from_payload(cls, json_payload):
