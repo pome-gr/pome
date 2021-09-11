@@ -125,7 +125,7 @@ class Account(PomeEncodable):
         if algebrised:
             return balance.format(g.company.locale)
         else:
-            return balance.format(g.company.locale) + " " + winning_side
+            return winning_side + " " + balance.format(g.company.locale)
 
     def _post_load_json(self):
         if self.bank_account_details is not None:
@@ -150,11 +150,16 @@ class AccountsChart(PomeEncodable):
         accounts_csv_file: Union[None, str] = None,
         accounts: List[Account] = [],
         bank_accounts_details: List[BankAccountDetails] = [],
+        account_profit_or_loss: Union[str, None] = None,
+        account_closing_balances: Union[str, None] = None,
     ):
         self.sections: List[AccountsChartSection] = sections
         self.accounts_csv_file: Union[None, str] = accounts_csv_file
         self.accounts: List[Account] = accounts
         self.bank_accounts_details: List[BankAccountDetails] = bank_accounts_details
+
+        self.account_profit_or_loss: Union[str, None] = account_profit_or_loss
+        self.account_closing_balances: Union[str, None] = account_closing_balances
 
         self.account_codes = None
         pass
