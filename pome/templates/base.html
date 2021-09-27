@@ -5,6 +5,13 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+  <!-- highlight-within-textarea CSS/JS -->
+  <link href="{{ url_for('static', filename='jquery.highlight-within-textarea.css')}}" rel="stylesheet">
+  <script src="{{ url_for('static', filename='jquery.highlight-within-textarea.js')}}"></script>
+
   <title>pome</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='tailwind.min.css') }}">
   <link rel="stylesheet" href="{{url_for('static', filename='global.css') }}">
@@ -33,6 +40,11 @@
         {% set classes_nav_items = "mb-2 p-2 text-lg bg-blue-500 cursor-pointer hover:bg-blue-400 flex items-center
         space-x-2" %}
         {% set classes_nav_emojis = "mr-1" %}
+
+        <a href="/bills">
+          <div class="{{classes_nav_items}}"><span class="{{classes_nav_emojis}}">🧾</span><span>Bills</span></div>
+        </a>
+
         <a href="/">
           <div class="{{classes_nav_items}}"><span class="{{classes_nav_emojis}}">📒</span><span>Accounts</span></div>
         </a>

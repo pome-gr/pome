@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block main_title %}
+Bills
+{% endblock %}
+{% block content %}
+
+<div class="mt-10">
+
+
+  <form method="POST" action="/bills/preset" class="flex items-start mb-3">
+    <select name="preset" onchange="this.form.submit()">
+      {% for preset in preset_list %}
+      <option value="{{preset}}" {% if preset==preset_filename %}selected{%endif%}>{{preset}}</option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-primary ml-4">
+      Load preset
+    </button>
+  </form>
+
+  <div class="mt-10">
+    <h2 class="text-lg">Provider</h2>
+    <input type="text" value="{% if preset_provider %}{{preset_provider}}{% endif %}" />
+  </div>
+
+  <div class="flex mt-3">
+
+    <div>
+      <h1 class="text-2xl">Bill</h1>
+      <textarea rows="20" cols="50" id="tx-bill" data-gramm="false" data-gramm_editor="false"
+        data-enable-grammarly="false">{% if preset_transaction_bill %}{{preset_transaction_bill}}{%endif%}</textarea>
+      <script>$('#tx-bill').highlightWithinTextarea({
+          highlight: "??",
+
+        });</script>
+      <div class="flex space-x-4 items-start mt-5">
+
+
+        <div>
+          The bill is:
+          <div class="pl-4">
+            <div>
+              <input type="radio" id="tx-bill-pending" name="tx-bill-status" value="pending">
+              <label for="tx-bill-pending" class="select-none cursor-pointer">Pending</label>
+            </div>
+            <div>
+              <input type="radio" id="tx-bill-paid" name="tx-bill-status" value="paid" checked>
+              <label for="tx-bill-paid" class="select-none cursor-pointer">Paid</label>
+            </div>
+          </div>
+          <script>
+            $('input[type=radio][name=tx-bill-status]').change(function () {
+              if (this.value == 'pending') {
+                $('#panel-payment').addClass("hidden");
+              }
+              else if (this.value == 'paid') {
+                $('#panel-payment').removeClass("hidden");
+              }
+            });
+          </script>
+        </div>
+      </div>
+    </div>
+
+    <div class="ml-5" id="panel-payment">
+      <h1 class="text-2xl">Payment</h1>
+      <textarea rows="20" cols="50" id="tx-payment" data-gramm="false" data-gramm_editor="false"
+        data-enable-grammarly="false">{% if preset_transaction_payment %}{{preset_transaction_payment}}{%endif%}</textarea>
+      <script>$('#tx-payment').highlightWithinTextarea({
+          highlight: "??",
+
+        });</script>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

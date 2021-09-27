@@ -1,7 +1,8 @@
+from typing import Union
+
 from pome.models.address import Address
 from pome.models.encoder import PomeEncodable
 from pome.models.validation import validate_date
-from typing import Union
 
 
 class AccountingPeriod(PomeEncodable):

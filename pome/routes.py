@@ -1,19 +1,18 @@
+import datetime
 import os
 from typing import Any, List
 
-from flask import Markup, abort, flash, render_template, request, send_file, Response
+from flask import Markup, Response, abort, flash, render_template, request, send_file
 from git import GitCommandError
 
 from pome import app, g, git, global_pull
 from pome.misc import get_recursive_json_hash
 from pome.models.transaction import (
     RECORDED_TX_FOLDER_NAME,
+    Amount,
     Transaction,
     TransactionLine,
-    Amount,
 )
-
-import datetime
 
 LAST_HASH = get_recursive_json_hash()
 
@@ -174,6 +173,67 @@ def eoy_profit_or_loss():
     to_return = Transaction(tx_date, transaction_lines, [], narrative=narrative)
 
     return Response(to_return.to_json(), status=200, mimetype="application/json")
+
+
+@app.route("/bills")
+@app.route("/bills/preset", methods=["GET", "POST"])
+def bills(preset=None):
+    import json
+    from os import listdir
+    from os.path import isfile, join
+
+    from pome.models.encoder import PomeEncoder
+
+    preset_list = []
+
+    try:
+        preset_list = [
+            f.replace(".json", "")
+            for f in listdir(join("bills", "preset"))
+            if isfile(join("bills", "preset", f)) and ".json" in f
+        ]
+    except FileNotFoundError as e:
+        print(e)
+
+    preset_filename = None
+    preset_filepath = None
+    preset_transaction_bill = None
+    preset_transaction_payment = None
+    preset_provider = None
+    if request.method == "POST":
+        if "preset" in request.form:
+            preset_filename = request.form["preset"]
+            if preset_filename != "none":
+                preset_filepath = join(
+                    "bills", "preset", request.form["preset"] + ".json"
+                )
+
+                try:
+                    with open(preset_filepath, "r") as f:
+                        json_content = json.loads(f.read())
+                        if "transactions" in json_content:
+                            if "bill" in json_content["transactions"]:
+                                preset_transaction_bill = PomeEncoder().encode(
+                                    json_content["transactions"]["bill"]
+                                )
+                            if "payment" in json_content["transactions"]:
+                                preset_transaction_payment = PomeEncoder().encode(
+                                    json_content["transactions"]["payment"]
+                                )
+                        if "provider" in json_content:
+                            preset_provider = json_content["provider"]
+
+                except FileNotFoundError as e:
+                    print(e)
+
+    return render_template(
+        "bills.html",
+        preset_list=["none"] + preset_list,
+        preset_transaction_bill=preset_transaction_bill,
+        preset_transaction_payment=preset_transaction_payment,
+        preset_filename=preset_filename,
+        preset_provider=preset_provider,
+    )
 
 
 @app.route("/eoy/transactions-closing-and-opening", methods=["GET"])
