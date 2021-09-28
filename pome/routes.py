@@ -128,9 +128,11 @@ def record_bill():
 
         git.add(os.path.join(bill.get_bill_filepath()))
 
-        commit_message = "Bill transaction:\n" + tx_bill.commit_message()
+        commit_message = "Bill date:\n" + tx_bill.date
+        commit_message += "Bill provider:\n" + bill.provider
+        commit_message += "Bill transaction:\n" + tx_bill.commit_message()
         if tx_payment is not None:
-            commit_message += "\n" + tx_payment.commit_message()
+            commit_message += "\n\nPayment transaction:\n" + tx_payment.commit_message()
 
         git.commit("-m", f"Adding bill {bill.id}", "-m", commit_message)
         print("Git commit")
