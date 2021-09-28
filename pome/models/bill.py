@@ -26,6 +26,8 @@ class Bill(PomeEncodable):
         to_return = {}
         try:
             for bill_file in os.listdir(RECORDED_BILL_FOLDER_NAME):
+                if ".json" not in bill_file:
+                    continue
                 bill_path = os.path.join(RECORDED_BILL_FOLDER_NAME, bill_file)
                 if not os.path.exists(bill_path):
                     continue

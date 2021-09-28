@@ -104,12 +104,10 @@ def record_bill():
             bill_data["status"],
             bill_data["provider"],
             {
-                "transactions": {
-                    "bill": tx_bill.id,
-                    "payment": tx_payment.id
-                    if tx_payment is not None
-                    else bill_data["transactions"]["payment"],
-                }
+                "bill": tx_bill.id,
+                "payment": tx_payment.id
+                if tx_payment is not None
+                else bill_data["transactions"]["payment"],
             },
         )
 
@@ -244,8 +242,33 @@ def eoy_profit_or_loss():
 
 
 @app.route("/bills")
-@app.route("/bills/preset", methods=["GET", "POST"])
 def bills(preset=None):
+
+    all_transactions = g.recorded_transactions
+
+    pending_bills: List[Any] = sorted(
+        list(
+            filter(lambda x: x[1].status == "pending", list(g.recorded_bills.items()))
+        ),
+        key=lambda x: x[1].id,
+    )[::-1]
+
+    paid_bills: List[Any] = sorted(
+        list(filter(lambda x: x[1].status == "paid", list(g.recorded_bills.items()))),
+        key=lambda x: x[1].id,
+    )[::-1]
+
+    return render_template(
+        "bills.html",
+        all_transactions=all_transactions,
+        pending_bills=pending_bills,
+        paid_bills=paid_bills,
+    )
+
+
+@app.route("/bills/new")
+@app.route("/bills/new/preset", methods=["GET", "POST"])
+def new_bills(preset=None):
     import json
     from os import listdir
     from os.path import isfile, join
@@ -295,7 +318,7 @@ def bills(preset=None):
                     print(e)
 
     return render_template(
-        "bills.html",
+        "new_bill.html",
         preset_list=["none"] + preset_list,
         preset_transaction_bill=preset_transaction_bill,
         preset_transaction_payment=preset_transaction_payment,

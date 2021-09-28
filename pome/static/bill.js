@@ -100,7 +100,7 @@ async function postBillPayload(ev) {
       txError(this.responseText);
     } else {
       txError("");
-      //window.location = "/transactions/recorded/" + this.responseText;
+      window.location = "/bills";
     }
   };
 }
