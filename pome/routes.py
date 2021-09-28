@@ -7,6 +7,7 @@ from git import GitCommandError
 
 from pome import app, g, git, global_pull
 from pome.misc import get_recursive_json_hash
+from pome.models.bill import Bill
 from pome.models.transaction import (
     RECORDED_TX_FOLDER_NAME,
     Amount,
@@ -78,6 +79,73 @@ def get_transaction_attachment(tx_id, filename):
 
     resp = send_file(absolute_filepath, download_name=filename)
     return resp
+
+
+@app.route("/bills/record", methods=["POST"])
+def record_bill():
+    if not app.jinja_env.globals["GIT_OK"]:
+        return "The server is not a valid git repository.", 500
+
+    try:
+        bill_data = request.json
+
+        print(bill_data)
+
+        tx_bill = Transaction.from_payload(bill_data["transactions"]["bill"])
+        tx_bill.assign_suitable_id()
+
+        tx_payment = None
+        if bill_data["status"] == "paid":
+            tx_payment = Transaction.from_payload(bill_data["transactions"]["payment"])
+            tx_payment.assign_suitable_id()
+
+        bill = Bill(
+            tx_bill.id,
+            bill_data["status"],
+            bill_data["provider"],
+            {
+                "transactions": {
+                    "bill": tx_bill.id,
+                    "payment": tx_payment.id
+                    if tx_payment is not None
+                    else bill_data["transactions"]["payment"],
+                }
+            },
+        )
+
+        tx_bill.save_on_disk()
+        g.recorded_transactions[tx_bill.id] = tx_bill
+
+        if tx_payment is not None:
+            tx_payment.save_on_disk()
+            g.recorded_transactions[tx_payment.id] = tx_payment
+
+        bill.save_on_disk()
+        g.recorded_bills[bill.id] = bill
+
+        print("Git add")
+        git.add(os.path.join(tx_bill.get_tx_path(), "*"))
+        if tx_payment is not None:
+            git.add(os.path.join(tx_payment.get_tx_path(), "*"))
+
+        git.add(os.path.join(bill.get_bill_filepath()))
+
+        commit_message = "Bill transaction:\n" + tx_bill.commit_message()
+        if tx_payment is not None:
+            commit_message += "\n" + tx_payment.commit_message()
+
+        git.commit("-m", f"Adding bill {bill.id}", "-m", commit_message)
+        print("Git commit")
+        print(commit_message)
+        if g.settings.git_communicate_with_remote:
+            git.push()
+            print("Git push")
+    except ValueError as e:
+        return str(e), 400
+    except GitCommandError as e:
+        return str(e), 400
+
+    return bill.id
 
 
 @app.route("/transactions/record", methods=["POST"])

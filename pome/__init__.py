@@ -4,7 +4,7 @@ from typing import Dict, Set, Union
 from flask import Flask
 
 from pome._version import __version__
-from pome.models import AccountsChart, Company, Settings
+from pome.models import AccountsChart, Bill, Company, Settings
 
 app = Flask(__name__)
 app.secret_key = b'\x9dq\x0bbE\xbaA{\xb4V`\xcaq\xb7\xcf"\x8b\xb8q\xe0\x13b\xb0\xb6'
@@ -32,6 +32,7 @@ class GlobalState(object):
         self.company: Union[Company, None] = None
         self.accounts_chart: Union[AccountsChart, None] = None
         self.recorded_transactions: Union[Dict[str, "Transaction"], None] = None
+        self.recorded_bills: Union[Dict[str, Bill], None] = None
 
     def sync_settings_from_disk(self):
         """Settings need to be load before everything else in order to interact with git."""
@@ -50,6 +51,8 @@ class GlobalState(object):
         app.jinja_env.globals["accounts_chart"] = self.accounts_chart
 
         self.recorded_transactions = Transaction.fetch_all_recorded_transactions()
+
+        self.recorded_bills = Bill.fetch_all_recorded_bills()
 
 
 g = GlobalState()

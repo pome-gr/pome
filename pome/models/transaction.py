@@ -110,18 +110,40 @@ class TransactionLine(PomeEncodable):
         try:
             if type(payload) != dict:
                 raise ValueError(f"Invalid transaction line {payload}.")
-            if "account_dr" not in payload:
+            print(payload)
+            if "account_dr" not in payload and "account_dr_code" not in payload:
                 raise ValueError(f"Field `account_dr` was not set in {payload}.")
-            if "account_cr" not in payload:
+            if "account_cr" not in payload and "account_dr_code" not in payload:
                 raise ValueError(f"Field `account_cr` was not set in {payload}.")
+
+            raw_amount_in_main_currency = None
             if "raw_amount_in_main_currency" not in payload:
-                raise ValueError(
-                    f"Field `raw_amount_in_main_currency` was not set in {payload}."
-                )
+
+                if (
+                    "amount" in payload
+                    and "raw_amount_in_main_currency" in payload["amount"]
+                ):
+                    raw_amount_in_main_currency = payload["amount"][
+                        "raw_amount_in_main_currency"
+                    ]
+                else:
+                    raise ValueError(
+                        f"Field `raw_amount_in_main_currency` was not set in {payload}."
+                    )
+            else:
+                raw_amount_in_main_currency = payload["raw_amount_in_main_currency"]
             return cls(
-                str(payload["account_dr"]),
-                str(payload["account_cr"]),
-                Amount.from_payload(payload["raw_amount_in_main_currency"]),
+                str(
+                    payload["account_dr"]
+                    if "account_dr" in payload
+                    else payload["account_dr_code"]
+                ),
+                str(
+                    payload["account_cr"]
+                    if "account_cr" in payload
+                    else payload["account_cr_code"]
+                ),
+                Amount.from_payload(raw_amount_in_main_currency),
             )
         except ValueError as e:
             raise e
