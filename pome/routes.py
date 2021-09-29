@@ -81,6 +81,51 @@ def get_transaction_attachment(tx_id, filename):
     return resp
 
 
+@app.route("/bills/pay/<bill_id>", methods=["POST"])
+def pay_bill(bill_id):
+    if not app.jinja_env.globals["GIT_OK"]:
+        return "The server is not a valid git repository.", 500
+
+    if not bill_id in g.recorded_bills:
+        return f"Bill ID {bill_id} is not valid.", 400
+
+    if g.recorded_bills[bill_id].status == "paid":
+        return f"Bill {bill_id} is already paid.", 400
+
+    try:
+        bill_data = request.json
+        print(bill_data)
+
+        tx_payment = Transaction.from_payload(bill_data["transactions"]["payment"])
+        tx_payment.assign_suitable_id()
+        tx_payment.save_on_disk()
+
+        g.recorded_bills[bill_id].transactions["payment"] = tx_payment.id
+        g.recorded_bills[bill_id].status = "paid"
+
+        g.recorded_bills[bill_id].save_on_disk()
+
+        print("Git add")
+        git.add(os.path.join(tx_payment.get_tx_path(), "*"))
+        git.add(os.path.join(g.recorded_bills[bill_id].get_bill_filepath()))
+
+        commit_message = "Bill being paid:\n" + bill_id
+        commit_message += "\n\nPayment transaction:\n" + tx_payment.commit_message()
+
+        git.commit("-m", f"Paying bill {bill_id}", "-m", commit_message)
+        print("Git commit")
+        print(commit_message)
+        if g.settings.git_communicate_with_remote:
+            git.push()
+            print("Git push")
+    except ValueError as e:
+        return str(e), 400
+    except GitCommandError as e:
+        return str(e), 400
+
+    return bill_id
+
+
 @app.route("/bills/record", methods=["POST"])
 def record_bill():
     if not app.jinja_env.globals["GIT_OK"]:
@@ -89,8 +134,6 @@ def record_bill():
     try:
         bill_data = request.json
 
-        print(bill_data)
-
         tx_bill = Transaction.from_payload(bill_data["transactions"]["bill"])
         tx_bill.assign_suitable_id()
 
@@ -98,6 +141,9 @@ def record_bill():
         if bill_data["status"] == "paid":
             tx_payment = Transaction.from_payload(bill_data["transactions"]["payment"])
             tx_payment.assign_suitable_id()
+
+        if bill_data["provider"].strip() == "":
+            return "You must assign a provider to the bill.", 400
 
         bill = Bill(
             tx_bill.id,
@@ -119,7 +165,9 @@ def record_bill():
             g.recorded_transactions[tx_payment.id] = tx_payment
 
         bill.save_on_disk()
+        print(bill.id)
         g.recorded_bills[bill.id] = bill
+        print(g.recorded_bills)
 
         print("Git add")
         git.add(os.path.join(tx_bill.get_tx_path(), "*"))
@@ -244,6 +292,7 @@ def eoy_profit_or_loss():
 
 
 @app.route("/bills")
+@app.route("/bills/")
 def bills(preset=None):
 
     all_transactions = g.recorded_transactions
@@ -265,6 +314,27 @@ def bills(preset=None):
         all_transactions=all_transactions,
         pending_bills=pending_bills,
         paid_bills=paid_bills,
+        all_bills=g.recorded_bills,
+    )
+
+
+@app.route("/bills/recorded/<bill_id>")
+def show_bill(bill_id):
+    if not bill_id in g.recorded_bills:
+        return f"Bill {bill_id} does not exists.", 404
+    bill = g.recorded_bills[bill_id]
+
+    textarea_payment_height = 15
+    if bill.status == "pending":
+        textarea_payment_height = bill.transactions["payment"].count("\n") + 1
+
+    return render_template(
+        "show_bill.html",
+        bill=bill,
+        all_transactions=g.recorded_transactions,
+        bill_pending=bill.status == "pending",
+        textarea_bill_height=15,
+        textarea_payment_height=textarea_payment_height,
     )
 
 
@@ -288,6 +358,9 @@ def new_bills(preset=None):
     except FileNotFoundError as e:
         print(e)
 
+    textarea_bill_height = 15
+    textarea_payment_height = 15
+
     preset_filename = None
     preset_filepath = None
     preset_transaction_bill = None
@@ -309,9 +382,15 @@ def new_bills(preset=None):
                                 preset_transaction_bill = PomeEncoder().encode(
                                     json_content["transactions"]["bill"]
                                 )
+                                textarea_bill_height = (
+                                    preset_transaction_bill.count("\n") + 1
+                                )
                             if "payment" in json_content["transactions"]:
                                 preset_transaction_payment = PomeEncoder().encode(
                                     json_content["transactions"]["payment"]
+                                )
+                                textarea_payment_height = (
+                                    preset_transaction_payment.count("\n") + 1
                                 )
                         if "provider" in json_content:
                             preset_provider = json_content["provider"]
@@ -326,6 +405,8 @@ def new_bills(preset=None):
         preset_transaction_payment=preset_transaction_payment,
         preset_filename=preset_filename,
         preset_provider=preset_provider,
+        textarea_bill_height=textarea_bill_height,
+        textarea_payment_height=textarea_payment_height,
     )
 
 

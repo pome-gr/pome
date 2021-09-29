@@ -31,11 +31,13 @@ class Bill(PomeEncodable):
                 bill_path = os.path.join(RECORDED_BILL_FOLDER_NAME, bill_file)
                 if not os.path.exists(bill_path):
                     continue
-                to_return[bill_path] = cls.from_json_file(bill_path)
 
-                if bill_file != to_return[bill_path].id + ".json":
+                bill_id = bill_file.replace(".json", "")
+                to_return[bill_id] = cls.from_json_file(bill_path)
+
+                if bill_file != to_return[bill_id].id + ".json":
                     raise ValueError(
-                        f"Bill id `{to_return[bill_path].id}` stored in `{bill_path}` does not match file name {bill_file}`"
+                        f"Bill id `{to_return[bill_id].id}` stored in `{bill_path}` does not match file name {bill_file}`"
                     )
         except FileNotFoundError as e:
             return {}

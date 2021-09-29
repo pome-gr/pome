@@ -20,9 +20,16 @@ Bills
     </thead>
 
     <tbody>
+
+      {% if not pending_bills and not paid_bills %}<tr>
+        <td colspan="4">No bills found.</td>
+      </tr>
+      {% endif %}
+
       {% for bill_id, pending_bill in pending_bills %}
       <tr>
-        <td> <span data-date="{{all_transactions[pending_bill.transactions.bill].date}}"></span>
+        <td> <a href="/bills/recorded/{{bill_id}}" class="normal-link"><span
+              data-date="{{all_transactions[pending_bill.transactions.bill].date}}"></span></a>
         </td>
         <td>{{pending_bill.provider}}</td>
         <td><span class="dot" style="background-color: orange; height: 14px; width: 14px;" title="Pending"></span></td>
@@ -34,7 +41,8 @@ Bills
 
       {% for bill_id, pending_bill in paid_bills %}
       <tr>
-        <td> <span data-date="{{all_transactions[pending_bill.transactions.bill].date}}"></span>
+        <td> <a href="/bills/recorded/{{bill_id}}" class="normal-link"><span
+              data-date="{{all_transactions[pending_bill.transactions.bill].date}}"></span></a>
         </td>
         <td>{{pending_bill.provider}}</td>
         <td><span class="dot" style="background-color: springgreen; height: 14px; width: 14px;" title="Paid"></span>

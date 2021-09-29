@@ -48,15 +48,24 @@ async function generateBillPayload(ev) {
   toReturn.status = $('input[name="bill-status"]:checked').val();
   toReturn.provider = $('input[name="bill-provider"]').val();
   toReturn.transactions = {};
-  toReturn.transactions.bill = JSON.parse(
-    document.getElementById("tx-bill").value
-  );
 
-  if (toReturn.status == "paid")
-    toReturn.transactions.payment = JSON.parse(
-      document.getElementById("tx-payment").value
+  if (document.getElementById("tx-bill").value.trim() == "") {
+    toReturn.transactions.bill = JSON.parse("{}");
+  } else {
+    toReturn.transactions.bill = JSON.parse(
+      document.getElementById("tx-bill").value
     );
-  else
+  }
+
+  if (toReturn.status == "paid") {
+    if (document.getElementById("tx-payment").value.trim() == "") {
+      toReturn.transactions.payment = JSON.parse("{}");
+    } else {
+      toReturn.transactions.payment = JSON.parse(
+        document.getElementById("tx-payment").value
+      );
+    }
+  } else
     toReturn.transactions.payment = document.getElementById("tx-payment").value;
 
   toReturn.transactions.bill.files = [];
@@ -81,6 +90,17 @@ async function generateBillPayload(ev) {
   return toReturn;
 }
 
+async function generateBillPaymentPayload(ev) {
+  toReturn = {};
+  toReturn.transactions = {};
+
+  toReturn.transactions.payment = JSON.parse(
+    document.getElementById("tx-payment").value
+  );
+
+  return toReturn;
+}
+
 const btnBillRecord = document.getElementById("btn-bill-record");
 async function postBillPayload(ev) {
   // if (!runTxValidation()) {
@@ -101,6 +121,33 @@ async function postBillPayload(ev) {
     } else {
       txError("");
       window.location = "/bills";
+    }
+  };
+}
+
+async function postBillPaymentPayload(ev) {
+  // if (!runTxValidation()) {
+  //   return;
+  // }
+
+  var bill_id = window.location.href.substring(
+    window.location.href.lastIndexOf("/") + 1
+  );
+  console.log(bill_id);
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/bills/pay/" + bill_id, true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+
+  xhr.send(JSON.stringify(await generateBillPaymentPayload()));
+  //btnBillRecord.classList.add("disabled");
+  xhr.onreadystatechange = function () {
+    if (this.readyState != 4) return;
+
+    if (this.status !== 200) {
+      txError(this.responseText);
+    } else {
+      txError("");
+      window.location = "/bills/recorded/" + bill_id;
     }
   };
 }
