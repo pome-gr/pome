@@ -9,6 +9,7 @@ class PomeEncoder(JSONEncoder):
 
     def __init__(self, **kwargs):
         super(PomeEncoder, self).__init__(**kwargs, indent=2)
+        self.ensure_ascii = False
 
     def default(self, o):
         return o.__dict__

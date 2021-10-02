@@ -291,9 +291,27 @@ def eoy_profit_or_loss():
     return Response(to_return.to_json(), status=200, mimetype="application/json")
 
 
+@app.route("/invoices")
+@app.route("/invoices/")
+def invoices():
+
+    all_transactions = g.recorded_transactions
+
+    pending_invoices: List[Any] = []
+
+    paid_invoices: List[Any] = []
+
+    return render_template(
+        "invoices.html",
+        all_transactions=all_transactions,
+        pending_invoices=pending_invoices,
+        paid_invoices=paid_invoices,
+    )
+
+
 @app.route("/bills")
 @app.route("/bills/")
-def bills(preset=None):
+def bills():
 
     all_transactions = g.recorded_transactions
 
@@ -314,7 +332,6 @@ def bills(preset=None):
         all_transactions=all_transactions,
         pending_bills=pending_bills,
         paid_bills=paid_bills,
-        all_bills=g.recorded_bills,
     )
 
 
@@ -340,7 +357,7 @@ def show_bill(bill_id):
 
 @app.route("/bills/new")
 @app.route("/bills/new/preset", methods=["GET", "POST"])
-def new_bills(preset=None):
+def new_bills():
     import json
     from os import listdir
     from os.path import isfile, join
@@ -407,6 +424,97 @@ def new_bills(preset=None):
         preset_provider=preset_provider,
         textarea_bill_height=textarea_bill_height,
         textarea_payment_height=textarea_payment_height,
+    )
+
+
+@app.route("/invoices/new")
+@app.route("/invoices/new/preset", methods=["GET", "POST"])
+def new_invoices():
+    import json
+    from os import listdir
+    from os.path import isfile, join
+
+    from pome.models.encoder import PomeEncoder
+
+    preset_list = []
+
+    try:
+        preset_list = [
+            f.replace(".json", "")
+            for f in listdir(join("invoices", "preset"))
+            if isfile(join("invoices", "preset", f)) and ".json" in f
+        ]
+    except FileNotFoundError as e:
+        print(e)
+
+    textarea_bill_height = 15
+    textarea_payment_height = 15
+    textarea_meta_invoice_height = 15
+
+    preset_filename = None
+    preset_filepath = None
+    preset_transaction_bill = None
+    preset_transaction_payment = None
+    preset_meta_invoice_payload = None
+    preset_client = None
+    preset_tags = None
+    if request.method == "POST":
+        if "preset" in request.form:
+            preset_filename = request.form["preset"]
+            if preset_filename != "none":
+                preset_filepath = join(
+                    "invoices", "preset", request.form["preset"] + ".json"
+                )
+
+                try:
+                    with open(preset_filepath, "r") as f:
+                        json_content = json.loads(f.read())
+                        if "transactions" in json_content:
+                            if "bill" in json_content["transactions"]:
+                                preset_transaction_bill = PomeEncoder().encode(
+                                    json_content["transactions"]["bill"]
+                                )
+                                textarea_bill_height = (
+                                    preset_transaction_bill.count("\n") + 1
+                                )
+                            if "payment" in json_content["transactions"]:
+                                preset_transaction_payment = PomeEncoder().encode(
+                                    json_content["transactions"]["payment"]
+                                )
+                                textarea_payment_height = (
+                                    preset_transaction_payment.count("\n") + 1
+                                )
+                        if "client" in json_content:
+                            preset_client = json_content["client"]
+                        if "tags" in json_content:
+                            preset_tags = ",".join(json_content["tags"])
+                        if (
+                            "metadata" in json_content
+                            and "invoice_payload" in json_content["metadata"]
+                        ):
+                            preset_meta_invoice_payload = PomeEncoder().encode(
+                                json_content["metadata"]["invoice_payload"],
+                            )
+                            textarea_meta_invoice_height = (
+                                preset_meta_invoice_payload.count("\n") + 1
+                            )
+
+                except FileNotFoundError as e:
+                    print(e)
+
+    return render_template(
+        "new_invoice.html",
+        preset_list=["none"] + preset_list,
+        preset_transaction_bill=preset_transaction_bill,
+        preset_transaction_payment=preset_transaction_payment,
+        preset_meta_invoice_payload=preset_meta_invoice_payload,
+        preset_filename=preset_filename,
+        preset_client=preset_client,
+        preset_tags=preset_tags,
+        textarea_bill_height=textarea_bill_height,
+        textarea_payment_height=textarea_payment_height,
+        textarea_meta_invoice_height=textarea_meta_invoice_height,
+        doc_filler_URL=g.settings.doc_filler_URL,
     )
 
 

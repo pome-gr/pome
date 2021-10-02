@@ -22,7 +22,7 @@ Bills
     <tbody>
 
       {% if not pending_bills and not paid_bills %}<tr>
-        <td colspan="4">No bills found.</td>
+        <td colspan="4">No bill found.</td>
       </tr>
       {% endif %}
 
@@ -39,19 +39,19 @@ Bills
       </tr>
       {% endfor %}
 
-      {% for bill_id, pending_bill in paid_bills %}
+      {% for bill_id, paid_bill in paid_bills %}
       <tr>
         <td> <a href="/bills/recorded/{{bill_id}}" class="normal-link"><span
-              data-date="{{all_transactions[pending_bill.transactions.bill].date}}"></span></a>
+              data-date="{{all_transactions[paid_bill.transactions.bill].date}}"></span></a>
         </td>
-        <td>{{pending_bill.provider}}</td>
+        <td>{{paid_bill.provider}}</td>
         <td><span class="dot" style="background-color: springgreen; height: 14px; width: 14px;" title="Paid"></span>
         </td>
         <td class="text-sm">
-          <a href="/transactions/recorded/{{pending_bill.transactions.bill}}" class="normal-link"
-            target="_blank">{{pending_bill.transactions.bill}}</a>,
-          <a href="/transactions/recorded/{{pending_bill.transactions.payment}}" class="normal-link"
-            target="_blank">{{pending_bill.transactions.payment}}</a>
+          <a href="/transactions/recorded/{{paid_bill.transactions.bill}}" class="normal-link"
+            target="_blank">{{paid_bill.transactions.bill}}</a>,
+          <a href="/transactions/recorded/{{paid_bill.transactions.payment}}" class="normal-link"
+            target="_blank">{{paid_bill.transactions.payment}}</a>
         </td>
       </tr>
       {% endfor %}

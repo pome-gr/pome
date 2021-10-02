@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% block main_title %}
+New Invoice
+{% endblock %}
+{% block content %}
+
+<div id="tx-error" class="hidden mb-10 bg-red-500 rounded-sm text-white p-5">
+
+</div>
+
+<div class="-mt-10">
+
+  <div class="flex space-x-5 items-end">
+    <form method="POST" action="/invoices/new/preset" class="flex items-start">
+      <select name="preset" onchange="this.form.submit()">
+        {% for preset in preset_list %}
+        <option value="{{preset}}" {% if preset==preset_filename %}selected{%endif%}>{{preset}}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-primary ml-4">
+        Load preset
+      </button>
+    </form>
+
+    <div>
+      <h2 class="text-lg">Client</h2>
+      <input type="text" name="invoice-client" value="{% if preset_client %}{{preset_client}}{% endif %}" />
+    </div>
+
+  </div>
+
+  <div class="flex mt-3">
+
+    <div>
+      <h1 class="text-2xl">Invoice</h1>
+      <textarea rows="{{textarea_bill_height}}" cols="60" id="tx-bill" data-gramm="false" data-gramm_editor="false"
+        data-enable-grammarly="false">{% if preset_transaction_bill %}{{preset_transaction_bill}}{%endif%}</textarea>
+      <script>$('#tx-bill').highlightWithinTextarea({
+          highlight: "??",
+
+        });</script>
+      <div class="flex space-x-10 items-start mt-5">
+
+        <div>
+          The invoice is:
+          <div class="pl-4">
+            <div>
+              <input type="radio" id="tx-bill-pending" name="bill-status" value="pending" checked>
+              <label for="tx-bill-pending" class="select-none cursor-pointer">Pending</label>
+            </div>
+            <div>
+              <input type="radio" id="tx-bill-paid" name="bill-status" value="paid">
+              <label for="tx-bill-paid" class="select-none cursor-pointer">Paid</label>
+            </div>
+          </div>
+          <script>
+            $('input[type=radio][name=bill-status]').change(function () {
+              if (this.value == 'pending') {
+                $('#panel-payment').addClass("hidden");
+              }
+              else if (this.value == 'paid') {
+                $('#panel-payment').removeClass("hidden");
+              }
+            });
+          </script>
+        </div>
+        <div>
+          <div class="w-full" id="tx-attachments">
+            <div class="text-xl font-bold block mb-1">Attachments</div>
+
+            {% for i in range(2) %}
+            <div class="mb-2 w-full {% if i == 0 %}hidden {%endif%}" id="div-tx-file-{{i}}">
+              <label for="tx-file-{{i}}" class="btn btn-secondary">Choose file</label>
+              <input class="hidden select-none" type="file" id="tx-file-{{i}}" onchange="updateFile(this)" />
+              <span class="hidden">
+                <span class="pl-2 normal-link"></span>
+                <span class="pl-2 cursor-pointer" title="Delete file" onclick="deleteFile(this)"
+                  id="delete-tx-file-{{i}}">❌</span>
+              </span>
+            </div>
+            {% endfor %}
+
+          </div>
+          <div class="btn btn-primary mt-3" onclick="addFile(this)">Add Attachment</div>
+        </div>
+
+        <div class="flex flex-col justify-end space-y-4">
+          <a href="/invoices">
+            <div class="btn btn-secondary text-lg">Cancel</div>
+          </a>
+          <div id="btn-bill-record" class="btn btn-primary text-lg" onclick="postInvoicePayload(this)">Record Invoice
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <div class="ml-5 hidden" id="panel-payment">
+      <h1 class="text-2xl">Payment</h1>
+      <textarea rows="{{textarea_payment_height}}" cols="60" id="tx-payment" data-gramm="false"
+        data-gramm_editor="false"
+        data-enable-grammarly="false">{% if preset_transaction_payment %}{{preset_transaction_payment}}{%endif%}</textarea>
+      <script>$('#tx-payment').highlightWithinTextarea({
+          highlight: "??",
+
+        });</script>
+    </div>
+  </div>
+
+
+  <div id="pdf-error" class="hidden mt-10 bg-red-500 rounded-sm text-white p-5">
+
+  </div>
+  <div class="mt-8">
+    <h1 class="text-2xl mb-2">Generate PDF invoice <div class="btn btn-primary text-base ml-2"
+        onclick="postPDFInvoicePayload(this, '{{doc_filler_URL}}')">Generate PDF</div>
+    </h1>
+    <textarea id="meta-invoice-payload" rows="{{textarea_meta_invoice_height}}" cols="60" id="meta-invoice"
+      data-gramm="false" data-gramm_editor="false" data-enable-grammarly="false">{% if preset_meta_invoice_payload %}{{preset_meta_invoice_payload}}{%else%}{
+        "template": "codepro_misc.html",
+        "payload": {
+          "invoice_number": "",
+          "date_created": "",
+          "date_due": "",
+          "date_paid": "",
+          "client_information": {
+            "name": {
+              "first": "",
+              "midlle": "",
+              "last": ""
+            },
+            "company": {
+              "company_name": "",
+              "vat_number": ""
+            },
+            "email": "",
+            "billing_address": {
+              "country_code": "",
+              "line1": "",
+              "line2": "",
+              "line3": "",
+              "county": "",
+              "postcode": ""
+            }
+          },
+          "_items": [
+            {
+              "name": "",
+              "qty": 1,
+              "unit_price": "",
+              "amount": ""
+            }
+          ],
+          "subtotal": "",
+          "total": ""
+        }
+      }{%endif%}</textarea>
+    <script>$('#meta-invoice-payload').highlightWithinTextarea({
+        highlight: "??",
+
+      });</script>
+  </div>
+
+</div>
+
+<script src="{{url_for('static', filename='invoice.js')}}"></script> {% endblock %}
