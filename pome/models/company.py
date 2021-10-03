@@ -71,7 +71,7 @@ class Company(PomeEncodable):
 
     def get_current_invoice_number(self):
         return datetime.today().strftime(self.invoice_number_prefix) + str(
-            self.current_invoice_counter
+            self.current_invoice_counter + 1
         )
 
     def save_on_disk(self):
