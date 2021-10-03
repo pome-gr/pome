@@ -27,16 +27,42 @@ New Invoice
       <input type="text" name="invoice-client" value="{% if preset_client %}{{preset_client}}{% endif %}" />
     </div>
 
+    <div>
+      <h2 class="text-lg">Tags <span class="text-xs">(comma separated)</span></h2>
+      <input type="text" name="invoice-tags" value="{% if preset_client %}{{preset_tags}}{% endif %}" />
+    </div>
+
   </div>
 
-  <div class="flex mt-3">
+  <div class="flex mt-3 space-x-5">
+    <div>
+      <h2 class="text-lg">Invoice Number</h2>
+
+      <div class=" bg-pink-500 rounded-sm text-sm text-white p-3 mb-2" style="width: 200px">
+        Please pull to be up to date with latest invoice number.
+      </div>
+      <div class="flex space-x-5">
+        <input type="text" name="invoice-number"
+          value="{% if preset_invoice_number %}{{preset_invoice_number}}{% endif %}" />
+        <div class="flex space-x-1 items-center">
+          <input type="checkbox" name="invoice-counter-increment" id="invoice-counter-increment" checked />
+          <label class="select-none" for="invoice-counter-increment">Increment invoice counter</label>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <div class="flex mt-1">
+
 
     <div>
       <h1 class="text-2xl">Invoice</h1>
       <textarea rows="{{textarea_bill_height}}" cols="60" id="tx-bill" data-gramm="false" data-gramm_editor="false"
         data-enable-grammarly="false">{% if preset_transaction_bill %}{{preset_transaction_bill}}{%endif%}</textarea>
       <script>$('#tx-bill').highlightWithinTextarea({
-          highlight: "??",
+          highlight: ["??", "__"],
 
         });</script>
       <div class="flex space-x-10 items-start mt-5">
@@ -45,16 +71,16 @@ New Invoice
           The invoice is:
           <div class="pl-4">
             <div>
-              <input type="radio" id="tx-bill-pending" name="bill-status" value="pending" checked>
-              <label for="tx-bill-pending" class="select-none cursor-pointer">Pending</label>
+              <input type="radio" id="tx-invoice-pending" name="invoice-status" value="pending" checked>
+              <label for="tx-invoice-pending" class="select-none cursor-pointer">Pending</label>
             </div>
             <div>
-              <input type="radio" id="tx-bill-paid" name="bill-status" value="paid">
-              <label for="tx-bill-paid" class="select-none cursor-pointer">Paid</label>
+              <input type="radio" id="tx-invoice-paid" name="invoice-status" value="paid">
+              <label for="tx-invoice-paid" class="select-none cursor-pointer">Paid</label>
             </div>
           </div>
           <script>
-            $('input[type=radio][name=bill-status]').change(function () {
+            $('input[type=radio][name=invoice-status]').change(function () {
               if (this.value == 'pending') {
                 $('#panel-payment').addClass("hidden");
               }
@@ -102,7 +128,7 @@ New Invoice
         data-gramm_editor="false"
         data-enable-grammarly="false">{% if preset_transaction_payment %}{{preset_transaction_payment}}{%endif%}</textarea>
       <script>$('#tx-payment').highlightWithinTextarea({
-          highlight: "??",
+          highlight: ["??", "__"],
 
         });</script>
     </div>
@@ -114,7 +140,13 @@ New Invoice
   </div>
   <div class="mt-8">
     <h1 class="text-2xl mb-2">Generate PDF invoice <div class="btn btn-primary text-base ml-2"
-        onclick="postPDFInvoicePayload(this, '{{doc_filler_URL}}')">Generate PDF</div>
+        onclick="postPDFInvoicePayload(this, '{{doc_filler_URL}}')" id="pdf-button">Generate PDF <div
+          class="spinner hidden" id="spinner-PDF">
+          <div class="bounce1"></div>
+          <div class="bounce2"></div>
+          <div class="bounce3"></div>
+        </div>
+      </div>
     </h1>
     <textarea id="meta-invoice-payload" rows="{{textarea_meta_invoice_height}}" cols="60" id="meta-invoice"
       data-gramm="false" data-gramm_editor="false" data-enable-grammarly="false">{% if preset_meta_invoice_payload %}{{preset_meta_invoice_payload}}{%else%}{
@@ -157,7 +189,7 @@ New Invoice
         }
       }{%endif%}</textarea>
     <script>$('#meta-invoice-payload').highlightWithinTextarea({
-        highlight: "??",
+        highlight: ["??", "__"],
 
       });</script>
   </div>

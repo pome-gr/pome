@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block main_title %}
+Invoice
+{% endblock %}
+{% block content %}
+
+<div id="tx-error" class="hidden mb-10 bg-red-500 rounded-sm text-white p-5">
+
+</div>
+
+<div class="-mt-5">
+
+  <div class="flex space-x-5 items-end">
+    <div>
+      <h2 class="text-lg">Client: {{invoice.client}}</h2>
+      <h2 class="text-lg">Tags: {{", ".join(invoice.tags)}}</h2>
+      <h2 class="text-lg">Status: {{invoice.status}}</h2>
+      <h2 class="text-lg">Invoice number: {{invoice.invoice_number}}</h2>
+      <input type="text" class="hidden" name="invoice-number" value="{{invoice.invoice_number}}" />
+    </div>
+
+  </div>
+
+  <div class="flex mt-3">
+
+    <div>
+      <h1 class="text-2xl">Invoice transaction</h1>
+      <textarea rows="{{textarea_bill_height}}" cols="60" id="tx-bill" data-gramm="false" data-gramm_editor="false"
+        data-enable-grammarly="false" disabled>{{all_transactions[invoice.transactions.bill]}}</textarea>
+      <p>Transaction:
+        <a class="normal-link" href="/transactions/recorded/{{all_transactions[invoice.transactions.bill].id}}"
+          target="_blank">{{all_transactions[invoice.transactions.bill].id}}</a>
+      </p>
+      {% if invoice_pending %}
+      <div class="flex space-x-5 items-start mt-5">
+        <a href="/invoices">
+          <div class="btn btn-secondary text-lg">Cancel</div>
+        </a>
+        <div id="btn-bill-record" class="btn btn-primary text-lg" onclick="postInvoicePaymentPayload(this)">Pay Invoice
+        </div>
+      </div>
+      {%endif%}
+    </div>
+
+
+    <div class="ml-5" id="panel-payment">
+      <h1 class="text-2xl">Payment</h1>
+      <textarea rows="{{textarea_payment_height}}" cols="60" id="tx-payment" data-gramm="false"
+        data-gramm_editor="false" data-enable-grammarly="false" {% if not invoice_pending %} disabled {% endif %}>{% if invoice_pending %}{{invoice.transactions.payment}}{% else %}{{all_transactions[invoice.transactions.payment]}}
+        {% endif %}</textarea>
+      {% if not invoice_pending %}
+      <p>Transaction:
+        <a class="normal-link" href="/transactions/recorded/{{all_transactions[invoice.transactions.payment].id}}"
+          target="_blank">{{all_transactions[invoice.transactions.payment].id}}</a>
+      </p>
+      {% endif %}
+
+      {% if invoice_pending %}
+      <script>$('#tx-payment').highlightWithinTextarea({
+          highlight: ["??", "__"],
+
+        });</script>
+      {% endif %}
+    </div>
+
+
+  </div>
+  <div id="pdf-error" class="hidden mt-10 bg-red-500 rounded-sm text-white p-5">
+
+  </div>
+  <div class="mt-8">
+    <h1 class="text-2xl mb-2">PDF invoice payload <div class="btn btn-primary text-base ml-2"
+        onclick="postPDFInvoicePayload(this, '{{doc_filler_URL}}')" id="pdf-button">Generate PDF <div
+          class="spinner hidden" id="spinner-PDF">
+          <div class="bounce1"></div>
+          <div class="bounce2"></div>
+          <div class="bounce3"></div>
+        </div>
+      </div>
+    </h1>
+    <textarea id="meta-invoice-payload" rows="{{textarea_meta_invoice_height}}" cols="60" id="meta-invoice"
+      data-gramm="false" data-gramm_editor="false" data-enable-grammarly="false"
+      disabled>{{formatted_invoice_payload}}</textarea>
+  </div>
+
+</div>
+
+<script src="{{url_for('static', filename='invoice.js')}}"></script> {% endblock %}

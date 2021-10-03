@@ -25,7 +25,7 @@ class Invoice(PomeEncodable):
         self.client: str = client
         self.tags: List[str] = tags
         self.transactions: Dict[str, str] = transactions
-        self.metadata: Dict[str, str] = {}
+        self.metadata: Dict[str, str] = metadata
 
     @classmethod
     def fetch_all_recorded_invoices(cls) -> Dict[str, "Invoice"]:

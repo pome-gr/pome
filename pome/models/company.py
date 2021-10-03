@@ -4,6 +4,8 @@ from pome.models.address import Address
 from pome.models.encoder import PomeEncodable
 from pome.models.validation import validate_date
 
+from datetime import datetime
+
 
 class AccountingPeriod(PomeEncodable):
     def __init__(self, begin: str, end: str):
@@ -39,6 +41,9 @@ class Company(PomeEncodable):
         accounts_currency_code: str = "",
         locale: str = "",
         current_accounting_period: Union[AccountingPeriod, None] = None,
+        current_invoice_counter: int = 0,
+        invoice_counter_start: int = 0,
+        invoice_number_prefix: str = "",
     ):
         self.name: str = name
         self.registration_country_code: str = registration_country_code
@@ -50,10 +55,25 @@ class Company(PomeEncodable):
         self.vat_number: str = vat_number
         self.accounts_currency_code: str = accounts_currency_code
         self.locale: str = locale
-        self.current_accounting_period = current_accounting_period
+        self.current_accounting_period: Union[
+            AccountingPeriod, None
+        ] = current_accounting_period
+
+        self.current_invoice_counter: int = current_invoice_counter
+        self.invoice_counter_start: int = invoice_counter_start
+        self.invoice_number_prefix: str = invoice_number_prefix
 
     def _post_load_json(self):
         if self.current_accounting_period:
             self.current_accounting_period = AccountingPeriod.from_json_dict(
                 self.current_accounting_period
             )
+
+    def get_current_invoice_number(self):
+        return datetime.today().strftime(self.invoice_number_prefix) + str(
+            self.current_invoice_counter
+        )
+
+    def save_on_disk(self):
+        with open(self.default_filename, "w") as f:
+            f.write(self.to_json())

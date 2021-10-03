@@ -36,7 +36,7 @@ New Bill
       <textarea rows="{{textarea_bill_height}}" cols="60" id="tx-bill" data-gramm="false" data-gramm_editor="false"
         data-enable-grammarly="false">{% if preset_transaction_bill %}{{preset_transaction_bill}}{%endif%}</textarea>
       <script>$('#tx-bill').highlightWithinTextarea({
-          highlight: "??",
+          highlight: ["??", "__"],
 
         });</script>
       <div class="flex space-x-10 items-start mt-5">
@@ -101,7 +101,7 @@ New Bill
         data-gramm_editor="false"
         data-enable-grammarly="false">{% if preset_transaction_payment %}{{preset_transaction_payment}}{%endif%}</textarea>
       <script>$('#tx-payment').highlightWithinTextarea({
-          highlight: "??",
+          highlight: ["??", "__"],
 
         });</script>
     </div>

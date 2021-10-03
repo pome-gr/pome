@@ -1,5 +1,6 @@
 import datetime
 import os
+from pome.models.encoder import PomeEncoder
 from typing import Any, List
 
 from flask import Markup, Response, abort, flash, render_template, request, send_file
@@ -8,6 +9,7 @@ from git import GitCommandError
 from pome import app, g, git, global_pull
 from pome.misc import get_recursive_json_hash
 from pome.models.bill import Bill
+from pome.models.invoice import Invoice
 from pome.models.transaction import (
     RECORDED_TX_FOLDER_NAME,
     Amount,
@@ -79,6 +81,56 @@ def get_transaction_attachment(tx_id, filename):
 
     resp = send_file(absolute_filepath, download_name=filename)
     return resp
+
+
+@app.route("/invoices/pay/<invoice_id>", methods=["POST"])
+def pay_invoice(invoice_id):
+    if not app.jinja_env.globals["GIT_OK"]:
+        return "The server is not a valid git repository.", 500
+
+    if not invoice_id in g.recorded_invoices:
+        return f"Invoice ID {invoice_id} is not valid.", 400
+
+    if g.recorded_invoices[invoice_id].status == "paid":
+        return f"Invoice {invoice_id} is already paid.", 400
+
+    try:
+        invoice_data = request.json
+        print(invoice_data)
+
+        tx_payment = Transaction.from_payload(invoice_data["transactions"]["payment"])
+        tx_payment.assign_suitable_id()
+        tx_payment.save_on_disk()
+
+        g.recorded_invoices[invoice_id].transactions["payment"] = tx_payment.id
+        g.recorded_invoices[invoice_id].status = "paid"
+
+        g.recorded_invoices[invoice_id].save_on_disk()
+
+        print("Git add")
+        git.add(os.path.join(tx_payment.get_tx_path(), "*"))
+        git.add(os.path.join(g.recorded_invoices[invoice_id].get_invoice_filepath()))
+
+        commit_message = "Invoice being paid:\n" + invoice_id
+        commit_message += (
+            "Invoice number:\n" + g.recorded_invoices[invoice_id].invoice_number
+        )
+        commit_message += "\n\nPayment transaction:\n" + tx_payment.commit_message()
+
+        git.commit(
+            "-m", f"Receiving payment for invoice {invoice_id}", "-m", commit_message
+        )
+        print("Git commit")
+        print(commit_message)
+        if g.settings.git_communicate_with_remote:
+            git.push()
+            print("Git push")
+    except ValueError as e:
+        return str(e), 400
+    except GitCommandError as e:
+        return str(e), 400
+
+    return invoice_id
 
 
 @app.route("/bills/pay/<bill_id>", methods=["POST"])
@@ -196,6 +248,93 @@ def record_bill():
     return bill.id
 
 
+@app.route("/invoices/record", methods=["POST"])
+def record_invoice():
+    if not app.jinja_env.globals["GIT_OK"]:
+        return "The server is not a valid git repository.", 500
+
+    try:
+        invoice_data = request.json
+        print(invoice_data)
+        tx_bill = Transaction.from_payload(invoice_data["transactions"]["bill"])
+        tx_bill.assign_suitable_id()
+
+        tx_payment = None
+        if invoice_data["status"] == "paid":
+            tx_payment = Transaction.from_payload(
+                invoice_data["transactions"]["payment"]
+            )
+            tx_payment.assign_suitable_id()
+
+        if invoice_data["invoice_number"].strip() == "":
+            return "You must assign an invoice number to the invoice.", 400
+
+        if invoice_data["client"].strip() == "":
+            return "You must assign a client to the bill.", 400
+
+        invoice = Invoice(
+            tx_bill.id,
+            invoice_data["invoice_number"],
+            invoice_data["status"],
+            invoice_data["client"],
+            invoice_data["tags"],
+            {
+                "bill": tx_bill.id,
+                "payment": tx_payment.id
+                if tx_payment is not None
+                else invoice_data["transactions"]["payment"],
+            },
+            {"invoice_payload": invoice_data["metadata"]["invoice_payload"]},
+        )
+
+        tx_bill.save_on_disk()
+        g.recorded_transactions[tx_bill.id] = tx_bill
+
+        if tx_payment is not None:
+            tx_payment.save_on_disk()
+            g.recorded_transactions[tx_payment.id] = tx_payment
+
+        invoice.save_on_disk()
+        print(invoice.id)
+        g.recorded_invoices[invoice.id] = invoice
+        print(g.recorded_invoices)
+
+        print("Git add")
+        git.add(os.path.join(tx_bill.get_tx_path(), "*"))
+        if tx_payment is not None:
+            git.add(os.path.join(tx_payment.get_tx_path(), "*"))
+
+        git.add(os.path.join(invoice.get_invoice_filepath()))
+
+        commit_message = "Invoice date:\n" + tx_bill.date
+        commit_message += "Invoice client:\n" + invoice.client
+        commit_message += "Invoice tags:\n" + ", ".join(invoice.tags)
+        commit_message += "Invoice transaction:\n" + tx_bill.commit_message()
+        if tx_payment is not None:
+            commit_message += "\n\nPayment transaction:\n" + tx_payment.commit_message()
+
+        git.commit("-m", f"Adding invoice {invoice.id}", "-m", commit_message)
+        print("Git commit")
+        print(commit_message)
+        if g.settings.git_communicate_with_remote:
+            git.push()
+            print("Git push")
+
+        if (
+            "invoice_counter_increment" in invoice_data
+            and invoice_data["invoice_counter_increment"]
+        ):
+            g.company.current_invoice_counter += 1
+            g.company.save_on_disk()
+
+    except ValueError as e:
+        return str(e), 400
+    except GitCommandError as e:
+        return str(e), 400
+
+    return invoice.id
+
+
 @app.route("/transactions/record", methods=["POST"])
 def record_transaction():
     if not app.jinja_env.globals["GIT_OK"]:
@@ -297,9 +436,23 @@ def invoices():
 
     all_transactions = g.recorded_transactions
 
-    pending_invoices: List[Any] = []
+    pending_invoices: List[Any] = sorted(
+        list(
+            filter(
+                lambda x: x[1].status == "pending", list(g.recorded_invoices.items())
+            )
+        ),
+        key=lambda x: x[1].id,
+    )[::-1]
 
-    paid_invoices: List[Any] = []
+    print(pending_invoices)
+
+    paid_invoices: List[Any] = sorted(
+        list(
+            filter(lambda x: x[1].status == "paid", list(g.recorded_invoices.items()))
+        ),
+        key=lambda x: x[1].id,
+    )[::-1]
 
     return render_template(
         "invoices.html",
@@ -352,6 +505,34 @@ def show_bill(bill_id):
         bill_pending=bill.status == "pending",
         textarea_bill_height=15,
         textarea_payment_height=textarea_payment_height,
+    )
+
+
+@app.route("/invoices/recorded/<invoice_id>")
+def show_invoice(invoice_id):
+    if not invoice_id in g.recorded_invoices:
+        return f"Invoice {invoice_id} does not exists.", 404
+    invoice = g.recorded_invoices[invoice_id]
+
+    textarea_payment_height = 15
+    if invoice.status == "pending":
+        textarea_payment_height = invoice.transactions["payment"].count("\n") + 1
+
+    return render_template(
+        "show_invoice.html",
+        invoice=invoice,
+        all_transactions=g.recorded_transactions,
+        invoice_pending=invoice.status == "pending",
+        textarea_bill_height=15,
+        doc_filler_URL=g.settings.doc_filler_URL,
+        textarea_payment_height=textarea_payment_height,
+        formatted_invoice_payload=PomeEncoder().encode(
+            invoice.metadata["invoice_payload"]
+        ),
+        textarea_meta_invoice_height=PomeEncoder()
+        .encode(invoice.metadata["invoice_payload"])
+        .count("\n")
+        + 1,
     )
 
 
@@ -515,6 +696,7 @@ def new_invoices():
         textarea_payment_height=textarea_payment_height,
         textarea_meta_invoice_height=textarea_meta_invoice_height,
         doc_filler_URL=g.settings.doc_filler_URL,
+        preset_invoice_number=g.company.get_current_invoice_number(),
     )
 
 

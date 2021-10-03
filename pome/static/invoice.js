@@ -53,11 +53,24 @@ function PDFError(error) {
   PDFErrorDiv.innerText = "PDF Doc Filler Error: " + error;
 }
 
-async function generateBillPayload(ev) {
+async function generateInvoicePayload(ev) {
   toReturn = {};
-  toReturn.status = $('input[name="bill-status"]:checked').val();
-  toReturn.provider = $('input[name="bill-provider"]').val();
+  toReturn.status = $('input[name="invoice-status"]:checked').val();
+  toReturn.client = $('input[name="invoice-client"]').val();
+  toReturn.invoice_number = $('input[name="invoice-number"]').val();
+  toReturn.tags = $('input[name="invoice-tags"]').val().split(",");
+  toReturn.invoice_counter_increment = document.getElementById(
+    "invoice-counter-increment"
+  ).checked;
   toReturn.transactions = {};
+  toReturn.metadata = {};
+  if (document.getElementById("meta-invoice-payload").value.trim() == "") {
+    toReturn.metadata.invoice_payload = JSON.parse("{}");
+  } else {
+    toReturn.metadata.invoice_payload = JSON.parse(
+      document.getElementById("meta-invoice-payload").value
+    );
+  }
 
   if (document.getElementById("tx-bill").value.trim() == "") {
     toReturn.transactions.bill = JSON.parse("{}");
@@ -100,7 +113,7 @@ async function generateBillPayload(ev) {
   return toReturn;
 }
 
-async function generateBillPaymentPayload(ev) {
+async function generateInvoicePaymentPayload(ev) {
   toReturn = {};
   toReturn.transactions = {};
 
@@ -111,17 +124,20 @@ async function generateBillPaymentPayload(ev) {
   return toReturn;
 }
 
-const btnBillRecord = document.getElementById("btn-bill-record");
-async function postBillPayload(ev) {
+async function postInvoicePaymentPayload(ev) {
   // if (!runTxValidation()) {
   //   return;
   // }
 
+  var bill_id = window.location.href.substring(
+    window.location.href.lastIndexOf("/") + 1
+  );
+  console.log(bill_id);
   var xhr = new XMLHttpRequest();
-  xhr.open("POST", "/bills/record", true);
+  xhr.open("POST", "/invoices/pay/" + bill_id, true);
   xhr.setRequestHeader("Content-Type", "application/json");
 
-  xhr.send(JSON.stringify(await generateBillPayload()));
+  xhr.send(JSON.stringify(await generateInvoicePaymentPayload()));
   //btnBillRecord.classList.add("disabled");
   xhr.onreadystatechange = function () {
     if (this.readyState != 4) return;
@@ -130,7 +146,31 @@ async function postBillPayload(ev) {
       txError(this.responseText);
     } else {
       txError("");
-      window.location = "/bills";
+      window.location = "/invoices/recorded/" + bill_id;
+    }
+  };
+}
+
+const btnBillRecord = document.getElementById("btn-bill-record");
+async function postInvoicePayload(ev) {
+  // if (!runTxValidation()) {
+  //   return;
+  // }
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/invoices/record", true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+
+  xhr.send(JSON.stringify(await generateInvoicePayload()));
+  //btnBillRecord.classList.add("disabled");
+  xhr.onreadystatechange = function () {
+    if (this.readyState != 4) return;
+
+    if (this.status !== 200) {
+      txError(this.responseText);
+    } else {
+      txError("");
+      window.location = "/invoices";
     }
   };
 }
@@ -171,8 +211,15 @@ function postPDFInvoicePayload(ev, doc_filler_URL) {
   xhr.responseType = "blob";
   xhr.send($("#meta-invoice-payload").val());
   //btnBillRecord.classList.add("disabled");
+
+  $("#spinner-PDF").removeClass("hidden");
+  $("#pdf-button").addClass("disabled");
+
   xhr.onreadystatechange = function () {
     if (this.readyState != 4) return;
+
+    $("#spinner-PDF").addClass("hidden");
+    $("#pdf-button").removeClass("disabled");
 
     if (this.status !== 200) {
       PDFError(this.responseText);
@@ -181,7 +228,8 @@ function postPDFInvoicePayload(ev, doc_filler_URL) {
       var blob = new Blob([this.response], { type: "application/pdf" });
       var link = document.createElement("a");
       link.href = window.URL.createObjectURL(blob);
-      link.download = "Sample.pdf";
+      link.download =
+        "Invoice_" + $('input[name="invoice-number"]').val() + ".pdf";
       link.click();
     }
   };

@@ -27,34 +27,34 @@ Invoices
         <td colspan="4">No invoice found.</td>
       </tr>
       {% endif %}
-
       {% for invoice_id, pending_invoice in pending_invoices %}
       <tr>
-        <td>{{pending_invoice.invoice_number}}</td>
-        <td> <a href="/invoices/recorded/{{invoice_id}}" class="normal-link"><span
-              data-date="{{all_transactions[pending_invoice.transactions.invoice].date}}"></span></a>
+        <td><a href="/invoices/recorded/{{invoice_id}}" class="normal-link">{{pending_invoice.invoice_number}}</a></td>
+        <td> <span data-date="{{all_transactions[pending_invoice.transactions.bill].date}}"></span>
         </td>
         <td>{{pending_invoice.client}}</td>
         <td>{% for tag in pending_invoice.tags %} {{tag}} {%endfor%}</td>
         <td><span class="dot" style="background-color: orange; height: 14px; width: 14px;" title="Pending"></span></td>
-        <td><a href="/invoices/recorded/{{pending_invoice.transactions.invoice}}" class="normal-link"
-            target="_blank">{{pending_invoice.transactions.invoice}}</a>
+        <td><a href="/invoices/recorded/{{pending_invoice.transactions.bill}}" class="normal-link"
+            target="_blank">{{pending_invoice.transactions.bill}}</a>
         </td>
       </tr>
       {% endfor %}
 
       {% for bill_id, paid_invoice in paid_invoices %}
       <tr>
-        <td>{{paid_invoice.invoice_number}}</td>
-        <td> <a href="/invoices/recorded/{{invoice_id}}" class="normal-link"><span
-              data-date="{{all_transactions[paid_invoice.transactions.invoice].date}}"></span></a>
+        <td><a href="/invoices/recorded/{{invoice_id}}" class="normal-link">{{paid_invoice.invoice_number}}</a></td>
+        <td> <span data-date="{{all_transactions[paid_invoice.transactions.bill].date}}"></span>
         </td>
         <td>{{paid_invoice.client}}</td>
         <td>{% for tag in paid_invoice.tags %} {{tag}} {%endfor%}</td>
         <td><span class="dot" style="background-color: springgreen; height: 14px; width: 14px;" title="Pending"></span>
         </td>
-        <td><a href="/invoices/recorded/{{paid_invoice.transactions.invoice}}" class="normal-link"
-            target="_blank">{{paid_invoice.transactions.invoice}}</a>
+        <td class="text-sm">
+          <a href="/transactions/recorded/{{paid_invoice.transactions.bill}}" class="normal-link"
+            target="_blank">{{paid_invoice.transactions.bill}}</a>,
+          <a href="/transactions/recorded/{{paid_invoice.transactions.payment}}" class="normal-link"
+            target="_blank">{{paid_invoice.transactions.payment}}</a>
         </td>
       </tr>
       {% endfor %}
