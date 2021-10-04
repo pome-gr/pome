@@ -45,6 +45,7 @@ function txError(error) {
 
 const PDFErrorDiv = document.getElementById("pdf-error");
 function PDFError(error) {
+  console.log(error);
   if (error === "") {
     PDFErrorDiv.classList.add("hidden");
     return;
@@ -222,7 +223,17 @@ function postPDFInvoicePayload(ev, doc_filler_URL) {
     $("#pdf-button").removeClass("disabled");
 
     if (this.status !== 200) {
-      PDFError(this.responseText);
+      const reader = new FileReader();
+
+      // This fires after the blob has been read/loaded.
+      reader.addEventListener("loadend", (e) => {
+        const text = e.target.result;
+        console.log(text);
+        PDFError(text);
+      });
+
+      // Start reading the blob as text.
+      reader.readAsText(this.response);
     } else {
       PDFError("");
       var blob = new Blob([this.response], { type: "application/pdf" });

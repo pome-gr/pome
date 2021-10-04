@@ -192,7 +192,7 @@ def record_bill():
         tx_payment = None
         if bill_data["status"] == "paid":
             tx_payment = Transaction.from_payload(bill_data["transactions"]["payment"])
-            tx_payment.assign_suitable_id()
+            tx_payment.assign_suitable_id([tx_bill.id])
 
         if bill_data["provider"].strip() == "":
             return "You must assign a provider to the bill.", 400
@@ -264,7 +264,7 @@ def record_invoice():
             tx_payment = Transaction.from_payload(
                 invoice_data["transactions"]["payment"]
             )
-            tx_payment.assign_suitable_id()
+            tx_payment.assign_suitable_id([tx_bill.id])
 
         if invoice_data["invoice_number"].strip() == "":
             return "You must assign an invoice number to the invoice.", 400

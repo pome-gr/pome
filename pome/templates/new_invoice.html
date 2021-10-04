@@ -12,7 +12,7 @@ New Invoice
 
   <div class="flex space-x-5 items-end">
     <form method="POST" action="/invoices/new/preset" class="flex items-start">
-      <select name="preset" onchange="this.form.submit()">
+      <select name="preset" onchange="this.form.submit()" style="width:200px">
         {% for preset in preset_list %}
         <option value="{{preset}}" {% if preset==preset_filename %}selected{%endif%}>{{preset}}</option>
         {% endfor %}

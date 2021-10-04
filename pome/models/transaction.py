@@ -275,14 +275,14 @@ class Transaction(PomeEncodable):
 
         return to_return
 
-    def assign_suitable_id(self) -> Union[None, str]:
+    def assign_suitable_id(self, not_in_that_list=[]) -> Union[None, str]:
         if self.id is not None:
             return self.id
         if self.date is None:
             return None
         self.id = self.date
         i = 1
-        while os.path.exists(self.get_tx_path()):
+        while os.path.exists(self.get_tx_path()) or (self.id in not_in_that_list):
             self.id = self.date + f"_{i}"
             i += 1
         return self.id
