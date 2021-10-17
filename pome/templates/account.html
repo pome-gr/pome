@@ -84,7 +84,13 @@ Account {{account.pretty_name()}}
         {% endfor %}
       </div>
 
+
+
     </section>
+  </div>
+  <div class="w-full flex justify-between">
+    <div class="text-xl"><strong>Total DR:</strong> {{account.side_total(True,True)}}</div>
+    <div class="text-xl"><strong>Total CR:</strong> {{account.side_total(False,True)}}</div>
   </div>
 </section>
 
