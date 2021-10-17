@@ -86,11 +86,13 @@ class Account(PomeEncodable):
 
         return sorted(to_return, key=lambda x: x[0].id)
 
-    def side_total(self, side_dr=True, formatted=False) -> Union[Money, str]:
+    def side_total(
+        self, side_dr=True, formatted=False, transaction_filter=lambda x: x
+    ) -> Union[Money, str]:
         from pome import g
 
         total = Money("0", Currency(g.company.accounts_currency_code))
-        for tx_id in g.recorded_transactions:
+        for tx_id in filter(transaction_filter, g.recorded_transactions):
             tx = g.recorded_transactions[tx_id]
             for line in tx.lines:
                 if line.account_dr_code == self.code and side_dr:
@@ -102,14 +104,14 @@ class Account(PomeEncodable):
         return total
 
     def balance(
-        self, formatted=False, algebrised=False
+        self, formatted=False, algebrised=False, transaction_filter=lambda x: x
     ) -> Union[Money, str, Tuple[Money, str]]:
         from pome import g
         from pome.models.transaction import Transaction
 
         sum_dr = Money("0", Currency(g.company.accounts_currency_code))
         sum_cr = Money("0", Currency(g.company.accounts_currency_code))
-        for tx_id in g.recorded_transactions:
+        for tx_id in filter(transaction_filter, g.recorded_transactions):
             tx: Transaction = g.recorded_transactions[tx_id]
             for line in tx.lines:
                 if line.account_dr_code == self.code:
