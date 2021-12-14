@@ -43,7 +43,9 @@ Invoices
 
       {% for invoice_id, paid_invoice in paid_invoices %}
       <tr>
-        <td><a href="/invoices/recorded/{{invoice_id}}" class="normal-link">{{paid_invoice.invoice_number}}</a></td>
+        <td class="truncate" style="max-width: 150px;"><a href="/invoices/recorded/{{invoice_id}}"
+            class="normal-link truncate" title="{{paid_invoice.invoice_number}}">{{paid_invoice.invoice_number}}</a>
+        </td>
         <td> <span data-date="{{all_transactions[paid_invoice.transactions.bill].date}}"></span>
         </td>
         <td>{{paid_invoice.client}}</td>
