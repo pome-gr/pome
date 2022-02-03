@@ -715,6 +715,7 @@ def eoy_closing_and_closing():
         if acc.type == "ASSET" or (
             acc.type == "ASSET_OR_LIABILITY" and winning_side == "DR"
         ):
+
             lines_closing.append(
                 TransactionLine(
                     g.accounts_chart.account_closing_balances,
@@ -734,18 +735,27 @@ def eoy_closing_and_closing():
             or acc.type == "EQUITY"
             or (acc.type == "ASSET_OR_LIABILITY" and winning_side == "CR")
         ):
+
+            modifier = 1
+
+            if (
+                acc.type == "ASSET_OR_LIABILITY"
+                and winning_side == "CR"
+                and acc.balance(algebrised=True)._amount < 0
+            ):
+                modifier = -1
             lines_closing.append(
                 TransactionLine(
                     acc.code,
                     g.accounts_chart.account_closing_balances,
-                    Amount.from_Money(acc.balance(algebrised=True)),
+                    Amount.from_Money(modifier * acc.balance(algebrised=True)),
                 )
             )
             lines_opening.append(
                 TransactionLine(
                     g.accounts_chart.account_closing_balances,
                     acc.code,
-                    Amount.from_Money(acc.balance(algebrised=True)),
+                    Amount.from_Money(modifier * acc.balance(algebrised=True)),
                 )
             )
 
