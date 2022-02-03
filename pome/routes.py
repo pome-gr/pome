@@ -463,7 +463,6 @@ def invoices():
 
 
 @app.route("/bills")
-@app.route("/bills/")
 def bills():
 
     all_transactions = g.recorded_transactions
