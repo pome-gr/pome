@@ -16,7 +16,7 @@ Invoices
       <th>#</th>
       <th>Date</th>
       <th>Client</th>
-      <th>Tags</th>
+      <th>Amount <span class="text-xs">(incl. VAT)</span></th>
       <th>Status</th>
       <th>Transactions</th>
     </thead>
@@ -33,7 +33,10 @@ Invoices
         <td> <span data-date="{{all_transactions[pending_invoice.transactions.bill].date}}"></span>
         </td>
         <td>{{pending_invoice.client}}</td>
-        <td>{% for tag in pending_invoice.tags %} {{tag}} {%endfor%}</td>
+        <!-- <td>{% for tag in pending_invoice.tags %} {{tag}} {%endfor%}</td> -->
+        <td> 
+          {{ all_transactions[pending_invoice.transactions.bill].total_amount(formatted=True)}}
+          </td>
         <td><span class="dot" style="background-color: orange; height: 14px; width: 14px;" title="Pending"></span></td>
         <td><a href="/invoices/recorded/{{pending_invoice.transactions.bill}}" class="normal-link"
             target="_blank">{{pending_invoice.transactions.bill}}</a>
@@ -49,7 +52,11 @@ Invoices
         <td> <span data-date="{{all_transactions[paid_invoice.transactions.bill].date}}"></span>
         </td>
         <td>{{paid_invoice.client}}</td>
-        <td>{% for tag in paid_invoice.tags %} {{tag}} {%endfor%}</td>
+        
+        <!-- <td>{% for tag in paid_invoice.tags %} {{tag}} {%endfor%}</td> -->
+        <td> 
+          {{ all_transactions[paid_invoice.transactions.bill].total_amount(formatted=True)}}
+          </td>
         <td><span class="dot" style="background-color: springgreen; height: 14px; width: 14px;" title="Pending"></span>
         </td>
         <td class="text-sm">

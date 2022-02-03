@@ -68,7 +68,25 @@ Invoice
   <div id="pdf-error" class="hidden mt-10 bg-red-500 rounded-sm text-white p-5">
 
   </div>
-  <div class="mt-8">
+  <div class="mt-5 w-full flex flex-col items-start">
+    <div class="w-full" id="tx-attachments">
+      <div class="text-xl font-bold block mb-1">Attachments</div>
+      {% set transaction = all_transactions[invoice.transactions.bill]%}
+      {% if transaction.attachments %}
+      {% for file in transaction.attachments %}
+      <div>
+        - <a href="/{{file.filepath}}" class="normal-link" target="_blank">{{file.filename}}</a>
+      </div>
+  
+      {% endfor %}
+      {%else%}
+      <p>No attachments.</p>
+      {%endif%}
+  
+    </div>
+  
+  </div>
+  <!-- <div class="mt-8">
     <h1 class="text-2xl mb-2">PDF invoice payload <div class="btn btn-primary text-base ml-2"
         onclick="postPDFInvoicePayload(this, '{{doc_filler_URL}}')" id="pdf-button">Generate PDF <div
           class="spinner hidden" id="spinner-PDF">
@@ -81,7 +99,7 @@ Invoice
     <textarea id="meta-invoice-payload" rows="{{textarea_meta_invoice_height}}" cols="60" id="meta-invoice"
       data-gramm="false" data-gramm_editor="false" data-enable-grammarly="false"
       disabled>{{formatted_invoice_payload}}</textarea>
-  </div>
+  </div> -->
 
 </div>
 

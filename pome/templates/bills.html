@@ -15,6 +15,7 @@ Bills
     <thead>
       <th>Date</th>
       <th>Provider</th>
+      <th>Amount <span class="text-xs">(incl. VAT)</span></th>
       <th>Status</th>
       <th>Transactions</th>
     </thead>
@@ -32,6 +33,9 @@ Bills
               data-date="{{all_transactions[pending_bill.transactions.bill].date}}"></span></a>
         </td>
         <td>{{pending_bill.provider}}</td>
+        <td> 
+          {{ all_transactions[pending_bill.transactions.bill].total_amount(formatted=True)}}
+          </td>
         <td><span class="dot" style="background-color: orange; height: 14px; width: 14px;" title="Pending"></span></td>
         <td><a href="/transactions/recorded/{{pending_bill.transactions.bill}}" class="normal-link"
             target="_blank">{{pending_bill.transactions.bill}}</a>
@@ -45,6 +49,7 @@ Bills
               data-date="{{all_transactions[paid_bill.transactions.bill].date}}"></span></a>
         </td>
         <td>{{paid_bill.provider}}</td>
+        <td>{{ all_transactions[paid_bill.transactions.bill].total_amount(formatted=True)}}</td>
         <td><span class="dot" style="background-color: springgreen; height: 14px; width: 14px;" title="Paid"></span>
         </td>
         <td class="text-sm">

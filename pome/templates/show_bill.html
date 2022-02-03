@@ -59,7 +59,27 @@ Bill
       {% endif %}
     </div>
 
+    
 
+  </div>
+
+  <div class="mt-5 w-full flex flex-col items-start">
+    <div class="w-full" id="tx-attachments">
+      <div class="text-xl font-bold block mb-1">Attachments</div>
+      {% set transaction = all_transactions[bill.transactions.bill]%}
+      {% if transaction.attachments %}
+      {% for file in transaction.attachments %}
+      <div>
+        - <a href="/{{file.filepath}}" class="normal-link" target="_blank">{{file.filename}}</a>
+      </div>
+  
+      {% endfor %}
+      {%else%}
+      <p>No attachments.</p>
+      {%endif%}
+  
+    </div>
+  
   </div>
 
 </div>
