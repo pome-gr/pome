@@ -431,7 +431,6 @@ def eoy_profit_or_loss():
 
 
 @app.route("/invoices")
-@app.route("/invoices/")
 def invoices():
 
     all_transactions = g.recorded_transactions
