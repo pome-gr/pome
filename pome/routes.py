@@ -1,9 +1,11 @@
+import csv
+import locale
 import datetime
 import os
 from pome.models.encoder import PomeEncoder
-from typing import Any, List
+from typing import Any, List, Tuple
 
-from flask import Markup, Response, abort, flash, render_template, request, send_file
+from flask import Markup, Response, abort, flash, render_template, request, send_file, make_response
 from git import GitCommandError
 
 from pome import app, g, git, global_pull
@@ -371,6 +373,32 @@ def journal():
         transactions=transactions,
         order_recorded=Transaction.order_recorded(g.recorded_transactions),
     )
+
+@app.route("/export", methods=["GET"])
+def export():
+    transactions: List[Any] = sorted(
+        list(g.recorded_transactions.items()), key=lambda x: x[1].date_recorded
+    )[::-1]
+
+    order_recorded=Transaction.order_recorded(g.recorded_transactions)
+
+    csv_string = "#;Date;Libellé;Account Dr; Account Cr; Amount (€);\n"
+    loc = locale.getlocale()
+    locale.setlocale(locale.LC_ALL,g.company.locale)
+    _locale_radix = locale.localeconv()['decimal_point']
+    locale.setlocale(locale.LC_ALL,loc)
+    for tx_id, tx in transactions:
+        csv_string += f"{order_recorded(tx_id)}; {tx.date}; {tx.narrative};;;\n"
+
+        for line in tx.lines:
+            dr = g.accounts_chart.account_codes[line.account_dr_code].pretty_name()
+            cr = g.accounts_chart.account_codes[line.account_cr_code].pretty_name()
+            amount = str(line.amount.amount(False).amount).replace(".",_locale_radix)
+            csv_string += f";;;{dr};{cr};{amount}\n"
+    
+    response = make_response(csv_string,200)
+    response.mimetype = "text/plain"
+    return response
 
 
 @app.route("/pull", methods=["PUT"])
